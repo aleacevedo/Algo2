@@ -79,9 +79,18 @@ int comparar(int vector1[], int n1, int vector2[], int n2) {
  */
 void seleccion(int vector[], int n) {
 	int pos;
+<<<<<<< HEAD
 	pos = maximo(vector,n);
 	while(pos!=-1){
 		swap(&vector[pos], &vector[n-1]);
+=======
+	int swap;
+	pos = maximo(vector,n);
+	while(pos!=-1){
+		swap = vector[n-1];
+		vector[n-1]=vector[pos];
+		vector[pos]=swap;
+>>>>>>> 9c5250de0efafceecb66886f1c7789d455266cde
 		n=n-1;
 		pos = maximo(vector,n);
 	}
