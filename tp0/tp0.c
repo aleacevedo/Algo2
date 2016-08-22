@@ -35,16 +35,12 @@ int maximo(int vector[], int n) {
  * el primer elemento en el que difieren no existe o es menor.
  */
 int comparar(int vector1[], int n1, int vector2[], int n2) {
-	printf("N1: %i \n", n1);
-	printf("N2: %i \n", n2);
 	if(n1 < n2){
 		for (int i = 0; i<n1; i++){
 			if(vector1[i]<vector2[i]){
-				printf("-1");
 				return -1;
 			}
 			if(vector2[i]<vector1[i]){
-				printf("1");
 				return 1;
 			}
 		}
@@ -58,8 +54,8 @@ int comparar(int vector1[], int n1, int vector2[], int n2) {
 			if(vector2[i]<vector1[i]){
 				return 1;
 			}
-			return 1;
 		}
+		return 1;
 	}
 	else{
 		for (int i = 0; i<n1; i++){
@@ -78,11 +74,14 @@ int comparar(int vector1[], int n1, int vector2[], int n2) {
  * selección.
  */
 void seleccion(int vector[], int n) {
-	int p;
-	p = maximo(vector,n);
-	while(p!=-1){
-		vector[n-1]=vector[p];
+	int pos;
+	int swap;
+	pos = maximo(vector,n);
+	while(pos!=-1){
+		swap = vector[n-1];
+		vector[n-1]=vector[pos];
+		vector[pos]=swap;
 		n=n-1;
-		p = maximo(vector,n);
+		pos = maximo(vector,n);
 	}
 }
