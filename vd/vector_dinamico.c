@@ -4,7 +4,34 @@
 // Funciones del alumno.
 
 // ...
+void vector_destruir(vector_t* vector){
+  free(vector->datos);
+  free(vector);
+}
 
+bool vector_obtener(vector_t* vector, size_t pos, int* valor){
+  int *posi;
+  if(vector->tam == 0 || vector->tam <= pos){
+    return false;
+  }
+  posi = vector->datos + pos;
+  *valor = *posi;
+  return true;
+}
+
+bool vector_guardar(vector_t* vector, size_t pos, int valor){
+  int *posi;
+  if(vector->tam == 0 || vector->tam <= pos ){
+    return false;
+  }
+  posi = vector->datos + pos;
+  *posi=valor;
+  return true;
+}
+
+size_t vector_obtener_tamanio(vector_t* vector){
+  return vector->tam;
+}
 
 // Funciones implementadas por la catedra.
 
