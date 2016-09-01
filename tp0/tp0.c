@@ -39,37 +39,21 @@ int maximo(int vector[], int n) {
  * el primer elemento en el que difieren no existe o es menor.
  */
 int comparar(int vector1[], int n1, int vector2[], int n2) {
-	if(n1 < n2){
-		for (int i = 0; i<n1; i++){
-			if(vector1[i]<vector2[i]){
-				return -1;
-			}
-			if(vector2[i]<vector1[i]){
-				return 1;
-			}
+	int i=0;
+	while(i<n1 && i<n2){
+		if(vector1[i]<vector2[i]){
+			return -1;
 		}
+		if(vector2[i]<vector1[i]){
+			return 1;
+		}
+		i++;
+	}
+	if(n1<n2){
 		return -1;
 	}
-	else if(n2<n1){
-		for (int i = 0; i<n2; i++){
-			if(vector1[i]<vector2[i]){
-				return -1;
-			}
-			if(vector2[i]<vector1[i]){
-				return 1;
-			}
-		}
+	if(n1>n2){
 		return 1;
-	}
-	else{
-		for (int i = 0; i<n1; i++){
-			if(vector1[i]<vector2[i]){
-				return -1;
-			}
-			if(vector2[i]<vector1[i]){
-				return 1;
-			}
-		}
 	}
 	return 0;
 }
