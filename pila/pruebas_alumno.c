@@ -19,7 +19,7 @@ void prueba_pila_un_elemento(){
   int *pun0=&num0;
   printf("INICIO PRUEBAS CON UN ELEMENTO\n");
   pila_t *pila1 = pila_crear();
-  print_test("Crear pila1", pila1 != NULL)
+  print_test("Crear pila1", pila1 != NULL);
   print_test("Apilar el primer", pila_apilar(pila1, pun0)==true);
   print_test("Ver tope del primero", pila_ver_tope(pila1)==pun0);
   print_test("Desapilar el primero", pila_desapilar(pila1)==pun0);
