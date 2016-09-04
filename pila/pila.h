@@ -52,6 +52,7 @@ void* pila_ver_tope(const pila_t *pila);
 // y la pila contiene un elemento menos.
 void* pila_desapilar(pila_t *pila);
 
+//bool pila_redimensionar(pila_t* pila, size_t tam)
 
 /* *****************************************************************
  *                    PRUEBAS PARA LA PILA
@@ -66,5 +67,6 @@ void* pila_desapilar(pila_t *pila);
 // Para la implementación de las pruebas se debe emplear la función
 // print_test(), como se ha visto en TPs anteriores.
 void pruebas_pila_alumno(void);
+void pruebas_pila_un_elemento(void);
 
 #endif // PILA_H
