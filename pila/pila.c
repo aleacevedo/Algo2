@@ -1,5 +1,6 @@
 #include "pila.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /* Definición del struct pila proporcionado por la cátedra.
  */
@@ -31,7 +32,7 @@ pila_t* pila_crear(){
 }
 
 bool pila_redimensionar(pila_t *pila, size_t tam){
-  void* datos_nuevo = realloc(pila->datos, tam * sizeof(int));
+  void* datos_nuevo = realloc(pila->datos, tam * sizeof(void*));
   if(datos_nuevo == NULL){
     return false;
   }
@@ -79,10 +80,11 @@ void* pila_desapilar(pila_t *pila){
   if(pila_esta_vacia(pila)){
     return NULL;
   }
-  posi = pila->datos + pila->largo-1;
   pila->largo--;
   if(pila->tam/2 > pila->largo){
-    pila_redimensionar(pila, pila->tam/2);
+    size_t nuevo_tam = pila->tam/2;
+    pila_redimensionar(pila, nuevo_tam);
   }
+  posi = pila->datos + pila->largo;
   return *posi;
 }
