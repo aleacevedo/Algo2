@@ -24,6 +24,7 @@ void prueba_pila_un_elemento(){
   print_test("Ver tope del primero", pila_ver_tope(pila1)==pun0);
   print_test("Desapilar el primero", pila_desapilar(pila1)==pun0);
   print_test("Desapilar vacio", pila_desapilar(pila1)==NULL);
+  pila_destruir(pila1);
 
 }
 void prueba_pila_ocho_elementos(){
@@ -43,13 +44,14 @@ void prueba_pila_ocho_elementos(){
     print_test("Desapilar", pila_desapilar(pila)==punt[x]);
   }
   print_test("Desapilar vacio", pila_desapilar(pila)==NULL);
+  pila_destruir(pila);
 }
 
 void prueba_pila_mil_elementos(){
   int num[1000];
   int *punt[1000];
   pila_t *pila = pila_crear();
-  printf("INICIO PRUEBAS CON OCHO ELEMENTOS\n");
+  printf("INICIO PRUEBAS CON MIL ELEMENTOS\n");
   for(int x = 0; x<1000; x++){
     num[x] = x;
     punt[x] = &num[x];
@@ -62,4 +64,36 @@ void prueba_pila_mil_elementos(){
     print_test("Desapilar", pila_desapilar(pila)==punt[x]);
   }
   print_test("Desapilar vacio", pila_desapilar(pila)==NULL);
+  pila_destruir(pila);
+}
+
+void prueba_pila_diezmil_elementos_intercalados(){
+  int num[10000];
+  int *punt[10000];
+  pila_t *pila = pila_crear();
+  printf("INICIO PRUEBAS CON MIL ELEMENTOS\n");
+  for(int x = 0; x<5000; x++){
+    num[x] = x;
+    punt[x] = &num[x];
+    print_test("Apilar", pila_apilar(pila, punt[x])==true);
+  }
+  for(int x = 4999; x>=2000; x--){
+    int *dev;
+    dev = pila_ver_tope(pila);
+    print_test("Ver tope", *dev ==x);
+    print_test("Desapilar", pila_desapilar(pila)==punt[x]);
+  }
+  for(int x = 2000; x<10000; x++){
+    num[x] = x;
+    punt[x] = &num[x];
+    print_test("Apilar", pila_apilar(pila, punt[x])==true);
+  }
+  for(int x = 9999; x>=0; x--){
+    int *dev;
+    dev = pila_ver_tope(pila);
+    print_test("Ver tope", *dev ==x);
+    print_test("Desapilar", pila_desapilar(pila)==punt[x]);
+  }
+  print_test("Desapilar vacio", pila_desapilar(pila)==NULL);
+  pila_destruir(pila);
 }

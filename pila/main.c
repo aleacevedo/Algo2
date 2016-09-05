@@ -14,5 +14,6 @@ int main(void)
     prueba_pila_un_elemento();
     prueba_pila_ocho_elementos();
     prueba_pila_mil_elementos();
+    prueba_pila_diezmil_elementos_intercalados();
     return failure_count() > 0;
 }
