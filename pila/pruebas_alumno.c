@@ -8,7 +8,7 @@
  *                   PRUEBAS UNITARIAS ALUMNO
  * *****************************************************************/
 
-void prueba_pila_alumno() {
+void pruebas_pila_alumno() {
     pila_t* ejemplo = NULL;
 
     print_test("Puntero inicializado a NULL", ejemplo == NULL);
