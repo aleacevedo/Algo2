@@ -1,4 +1,4 @@
-#include "pila.h"
+#include "cola.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -7,12 +7,12 @@
 struct cola {
   nodo_t *prim;
   nodo_t *ultim;
-}
+};
 
-struct nodo{
+struct nodo {
   void *dato;
   nodo_t *prox;
-}
+};
 
 
 /* *****************************************************************
@@ -38,7 +38,7 @@ void cola_destruir(cola_t *cola, void destruir_dato(void*)){
   free(cola);
 }
 
-bool cola_esta_vacia(cola_t *cola){
+bool cola_esta_vacia(const cola_t *cola){
 /* Devuelve true si la cola esta vacia, false en caso que no lo este*/
   if(cola->prim==NULL){
     return true;
@@ -61,14 +61,17 @@ bool cola_encolar(cola_t *cola, void *valor){
   }
   cola->ultim->prox = nodo;
   cola->ultim = nodo;
+  return true;
 }
 
-void* cola_ver_primero(cola_t *cola){
+void* cola_ver_primero(const cola_t *cola){
 /* Devuelve el primero de la lista, si esta vacia Devuelve null*/
+  void *aux;
   if(cola_esta_vacia(cola)){
     return NULL;
   }
-  return cola->prim->dato;
+  aux=cola->prim->dato;
+  return aux;
 }
 
 void* cola_desencolar(cola_t *cola){
@@ -77,7 +80,8 @@ void* cola_desencolar(cola_t *cola){
   if(cola_esta_vacia(cola)){
     return NULL;
   }
-  aux = cola->prim;
-  cola->prim = cola->prox;
-  return aux->dato;
+  aux = cola->prim->dato;
+  free(cola->prim);
+  cola->prim = cola->prim->prox;
+  return aux;
 }
