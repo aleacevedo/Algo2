@@ -12,6 +12,8 @@
 
 struct cola;
 typedef struct cola cola_t;
+struct nodo;
+typedef struct nodo nodo_t;
 
 
 /* ******************************************************************
