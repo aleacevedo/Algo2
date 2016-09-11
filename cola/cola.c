@@ -22,18 +22,22 @@ struct nodo {
 cola_t* cola_crear(){
   /*Crea una cola vacia, en caso de que no sea posible devuelve NULL*/
   cola_t *cola = malloc(sizeof(cola_t));
+  cola->prim = NULL;
+  cola->ultim = NULL;
   return cola;
 }
 
 void cola_destruir(cola_t *cola, void destruir_dato(void*)){
   /* Destruye la totalidad de la cola junto con sus datos en caso de que se pase
     una funciona para que asi sea realizado */
-  void *aux;
+  nodo_t *aux;
   while(cola->prim!=NULL){
-    destruir_dato(cola->prim->dato);
-    aux=cola->prim->prox;
-    free(cola->prim);
-    cola->prim=aux;
+    if(destruir_dato){
+      destruir_dato(cola->prim->dato);
+    }
+    aux = cola->prim;
+    cola->prim = cola->prim->prox;
+    free(aux);
   }
   free(cola);
 }
@@ -54,6 +58,7 @@ bool cola_encolar(cola_t *cola, void *valor){
     return false;
   }
   nodo->dato = valor;
+  nodo->prox = NULL;
   if(cola_esta_vacia(cola)){
     cola->prim = nodo;
     cola->ultim = nodo;
@@ -76,12 +81,14 @@ void* cola_ver_primero(const cola_t *cola){
 
 void* cola_desencolar(cola_t *cola){
 /* Desencola el primero de la lista, si esta vacia devuelve null*/
-  void *aux;
+  nodo_t *aux;
+  void *valor;
   if(cola_esta_vacia(cola)){
     return NULL;
   }
-  aux = cola->prim->dato;
-  free(cola->prim);
+  aux = cola->prim;
+  valor = cola->prim->dato;
   cola->prim = cola->prim->prox;
-  return aux;
+  free(aux);
+  return valor;
 }
