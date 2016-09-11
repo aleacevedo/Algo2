@@ -4,6 +4,7 @@
 
 /* Definicion del struct cola y nodo*/
 
+typedef struct nodo nodo_t;
 struct cola {
   nodo_t *prim;
   nodo_t *ultim;
@@ -13,7 +14,6 @@ struct nodo {
   void *dato;
   nodo_t *prox;
 };
-
 
 /* *****************************************************************
  *                    PRIMITIVAS DE LA PILA
