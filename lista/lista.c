@@ -1,4 +1,15 @@
-#include<lista.h>
+#include"lista.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+
+/* Definicion struct nodo_t */
+typedef struct nodo nodo_t;
+
+struct nodo {
+  void *dato;
+  nodo_t *prox;
+};
 
 /* Definicion struct lista */
 struct lista{
@@ -7,12 +18,6 @@ struct lista{
   size_t largo;
 };
 
-/* Definicion struct nodo_t */
-
-typedef struct nodo {
-  void *dato;
-  nodo_t *prox;
-} nodo_t;
 
 /* Definicion struct iterador externo */
 struct lista_iter{
@@ -33,7 +38,7 @@ lista_t* lista_crear(){
   return lista;
 }
 
-bool lista_esta_vacia(lista_t *lista){
+bool lista_esta_vacia(const lista_t *lista){
   if(lista_largo(lista)==0){
     return true;
   }
@@ -53,7 +58,7 @@ bool lista_insertar_primero(lista_t *lista, void *dato){
     return true;
   }
   nodo_nuevo->prox = lista->prim;
-  nodo->prim = nodo_nuevo;
+  lista->prim = nodo_nuevo;
   lista->largo++;
   return true;
 }
@@ -86,26 +91,26 @@ void* lista_borrar_primero(lista_t *lista){
   }
   if(lista_esta_vacia(lista)){
     lista->prim = NULL;
-    lista->ult = NULL
+    lista->ult = NULL;
   }
   return dato_aux;
 }
 
-void* lista_ver_primero(lista_t *lista){
+void* lista_ver_primero(const lista_t *lista){
   if(!lista_esta_vacia(lista)){
     return lista->prim->dato;
   }
   return NULL;
 }
 
-void* lista_ver_ultimo(lista_t *lista){
+void* lista_ver_ultimo(const lista_t *lista){
   if(!lista_esta_vacia(lista)){
     return lista->ult->dato;
   }
   return NULL;
 }
 
-size_t lista_largo(lista){
+size_t lista_largo(const lista_t *lista){
   return lista->largo;
 }
 
@@ -118,8 +123,9 @@ void lista_destruir(lista_t *lista, void destruir_dato()){
     nodo_aux = lista->prim;
     lista->prim = lista->prim->prox;
     free(nodo_aux);
-    lista->largo--:
+    lista->largo--;
   }
+  free(lista);
 }
 
 /* *****************************************************************
@@ -144,14 +150,14 @@ bool lista_iter_avanzar(lista_iter_t *iter){
   return true;
 }
 
-void* lista_iter_ver_actual(lista_iter_t *iter){
+void* lista_iter_ver_actual(const lista_iter_t *iter){
   if(lista_iter_al_final(iter)){
     return NULL;
   }
   return iter->actual->dato;
 }
 
-bool lista_iter_al_final(lista_iter_t *iter){
+bool lista_iter_al_final(const lista_iter_t *iter){
   if(iter->actual==NULL){
     return true;
   }
@@ -216,7 +222,7 @@ void *lista_iter_borrar(lista_iter_t *iter){
 }
 
 void lista_iterar(lista_t *lista, bool (*visitar)(void *dato, void *extra), void *extra){
-  bool aux == true;
+  bool aux = true;
   void *lista_aux[lista_largo(lista)];
   if(visitar==NULL){
     return;
@@ -228,6 +234,6 @@ void lista_iterar(lista_t *lista, bool (*visitar)(void *dato, void *extra), void
     i++;
   }
   for(int o = i-1; i>=0; o--){
-    lista_insertar_primero(lista_aux[o]);
+    lista_insertar_primero(lista, lista_aux[o]);
   }
 }
