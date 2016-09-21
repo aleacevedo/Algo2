@@ -48,6 +48,7 @@ bool lista_esta_vacia(const lista_t *lista){
 bool lista_insertar_primero(lista_t *lista, void *dato){
   nodo_t *nodo_nuevo;
   nodo_nuevo = malloc(sizeof(nodo_t));
+  nodo_nuevo->dato = dato;
   if(nodo_nuevo==NULL){
     return false;
   }
@@ -66,6 +67,8 @@ bool lista_insertar_primero(lista_t *lista, void *dato){
 bool lista_insertar_ultimo(lista_t *lista, void *dato){
   nodo_t *nodo_nuevo;
   nodo_nuevo = malloc(sizeof(nodo_t));
+  nodo_nuevo->prox = NULL;
+  nodo_nuevo->dato = dato;
   if(nodo_nuevo==NULL){
     return false;
   }
@@ -77,6 +80,7 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato){
   }
   lista->ult->prox = nodo_nuevo;
   lista->ult = nodo_nuevo;
+  lista->largo++;
   return true;
 }
 
@@ -85,9 +89,10 @@ void* lista_borrar_primero(lista_t *lista){
   void *dato_aux = NULL;
   if(!lista_esta_vacia(lista)){
     nodo_aux = lista->prim;
+    dato_aux = lista->prim->dato;
     lista->prim = lista->prim->prox;
-    dato_aux = nodo_aux->dato;
     free(nodo_aux);
+    lista->largo--;
   }
   if(lista_esta_vacia(lista)){
     lista->prim = NULL;
@@ -170,16 +175,29 @@ void lista_iter_destruir(lista_iter_t *iter){
 
 bool lista_iter_insertar(lista_iter_t *iter, void *dato){
   nodo_t *nodo_nuevo = malloc(sizeof(nodo_t));
-  lista_iter_t *iter_aux = lista_iter_crear(iter->lista);
+  lista_iter_t *iter_aux;
   nodo_nuevo->dato = dato;
-  if(nodo_nuevo==NULL || iter_aux==NULL){
+  nodo_nuevo->prox = NULL;
+  if(nodo_nuevo==NULL){
     return false;
   }
   if(iter->lista->prim==iter->actual){
     iter->lista->prim = nodo_nuevo;
     nodo_nuevo->prox = iter->actual;
     iter->lista->largo++;
+    iter->actual = iter->lista->prim;
     return true;
+  }
+  if(iter->actual==NULL){
+    iter->lista->prim = nodo_nuevo;
+    iter->lista->ult = iter->lista->prim;
+    iter->lista->largo++;
+    iter->actual = iter->lista->prim;
+    return true;
+  }
+  iter_aux = lista_iter_crear(iter->lista);
+  if(iter_aux==NULL){
+    return false;
   }
   while(iter->actual!=iter_aux->actual->prox){
     lista_iter_avanzar(iter_aux);
@@ -188,11 +206,12 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato){
   iter_aux->actual->prox = nodo_nuevo;
   iter->lista->largo++;
   lista_iter_destruir(iter_aux);
+  iter->actual = nodo_nuevo;
   return true;
 }
 
 void *lista_iter_borrar(lista_iter_t *iter){
-  lista_iter_t *iter_aux = lista_iter_crear(iter->lista);
+  lista_iter_t *iter_aux;
   void *dato_aux;
   if(lista_iter_al_final(iter)){
     return NULL;
@@ -205,6 +224,7 @@ void *lista_iter_borrar(lista_iter_t *iter){
     iter->actual = iter->lista->prim;
     return dato_aux;
   }
+  iter_aux = lista_iter_crear(iter->lista);
   while(iter->actual!=iter_aux->actual->prox){
     lista_iter_avanzar(iter_aux);
   }
@@ -223,16 +243,23 @@ void *lista_iter_borrar(lista_iter_t *iter){
 
 void lista_iterar(lista_t *lista, bool (*visitar)(void *dato, void *extra), void *extra){
   bool aux = true;
+  bool aux2 = true;
   void *lista_aux[lista_largo(lista)];
   if(visitar==NULL){
     return;
   }
   int i = 0;
-  while(aux && !lista_esta_vacia(lista)){
-    lista_aux[i] = lista_borrar_primero(lista);
-    aux = visitar(lista_aux[i],extra);
-    i++;
+  while(aux2){
+    aux2 = !lista_esta_vacia(lista);
+    printf("DEBUG -1\n");
+    while(aux && aux2){
+      printf("DEBUG");
+      lista_aux[i] = lista_borrar_primero(lista);
+      aux = visitar(lista_aux[i],extra);
+      i++;
+    }
   }
+  printf("DEBUG 1");
   for(int o = i-1; i>=0; o--){
     lista_insertar_primero(lista, lista_aux[o]);
   }
