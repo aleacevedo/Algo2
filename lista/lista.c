@@ -49,6 +49,7 @@ bool lista_insertar_primero(lista_t *lista, void *dato){
   nodo_t *nodo_nuevo;
   nodo_nuevo = malloc(sizeof(nodo_t));
   nodo_nuevo->dato = dato;
+  nodo_nuevo->prox = NULL;
   if(nodo_nuevo==NULL){
     return false;
   }
@@ -186,13 +187,21 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato){
     nodo_nuevo->prox = iter->actual;
     iter->lista->largo++;
     iter->actual = iter->lista->prim;
+    iter->lista->ult = iter->actual;
+    return true;
+  }
+  if(lista_esta_vacia(iter->lista)){
+    iter->lista->prim = nodo_nuevo;
+    iter->lista->ult = nodo_nuevo;
+    iter->lista->largo++;
+    iter->actual = iter->lista->prim;
     return true;
   }
   if(iter->actual==NULL){
-    iter->lista->prim = nodo_nuevo;
-    iter->lista->ult = iter->lista->prim;
+    iter->lista->ult->prox = nodo_nuevo;
+    iter->lista->ult = nodo_nuevo;
     iter->lista->largo++;
-    iter->actual = iter->lista->prim;
+    iter->actual = nodo_nuevo;
     return true;
   }
   iter_aux = lista_iter_crear(iter->lista);
@@ -242,25 +251,8 @@ void *lista_iter_borrar(lista_iter_t *iter){
 }
 
 void lista_iterar(lista_t *lista, bool (*visitar)(void *dato, void *extra), void *extra){
-  bool aux = true;
-  bool aux2 = true;
-  void *lista_aux[lista_largo(lista)];
-  if(visitar==NULL){
-    return;
-  }
-  int i = 0;
-  while(aux2){
-    aux2 = !lista_esta_vacia(lista);
-    printf("DEBUG -1\n");
-    while(aux && aux2){
-      printf("DEBUG");
-      lista_aux[i] = lista_borrar_primero(lista);
-      aux = visitar(lista_aux[i],extra);
-      i++;
-    }
-  }
-  printf("DEBUG 1");
-  for(int o = i-1; i>=0; o--){
-    lista_insertar_primero(lista, lista_aux[o]);
+  nodo_t *aux = lista->prim;
+  while(aux!=NULL && visitar(aux->dato, extra)==true){
+    aux=aux->prox;
   }
 }
