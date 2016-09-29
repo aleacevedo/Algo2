@@ -68,8 +68,7 @@ fnv_32_buf(void *buf, size_t len, Fnv32_t hval)
  * NOTE: To use the recommended 32 bit FNV-1 hash, use FNV1_32_INIT as the hval
  *	 argument on the first call to either fnv_32_buf() or fnv_32_str().
  */
-Fnv32_t
-fnv_32_str(const char *str, Fnv32_t hval)
+Fnv32_t fnv_32_str(const char *str, Fnv32_t hval)
 {
     unsigned char *s = (unsigned char *)str;	/* unsigned string */
 

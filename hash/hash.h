@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "fnv.h"
 
 // Los structs deben llamarse "hash" y "hash_iter".
