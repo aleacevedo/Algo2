@@ -88,9 +88,7 @@ void *hash_borrar(hash_t *hash, const char *clave){
   hash_clave = hash_clave % (int)hash->largo;
   Fnv32_t primer_hash= hash_clave;
   nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
-  if(hash->cant_elementos==0){
-    return NULL;
-  }
+
   while(nodo_hash->clave==NULL||strcmp(nodo_hash->clave,clave)){
 //    printf("DEBUG: %i\n", hash_clave);
     if(hash_clave < hash->largo-1){
