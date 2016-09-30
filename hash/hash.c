@@ -1,6 +1,6 @@
 #include "hash.h"
 
-//#define TAM_INICIAL (100)
+#define TAM_INICIAL (100)
 
 typedef enum state{
   vacio,
@@ -96,7 +96,6 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
   for(int i = 0; i<strlen(clave); i++){
     nodo_hash->clave[i] = clave[i];
   }
-  //nodo_hash->dato = malloc(sizeof(void*));
   nodo_hash->dato = dato;
   nodo_hash->estado = ocupado;
   hash->cant_elementos++;
@@ -115,7 +114,7 @@ void *hash_borrar(hash_t *hash, const char *clave){
   hash->cant_elementos--;
   return nodo_hash->dato;
 }
-/*alejo putooo*/
+
 void *hash_obtener(const hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
