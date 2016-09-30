@@ -1,6 +1,6 @@
 #include "hash.h"
 
-#define TAM_INICIAL (100)
+//#define TAM_INICIAL (100)
 
 typedef enum state{
   vacio,
