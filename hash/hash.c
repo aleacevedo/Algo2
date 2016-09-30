@@ -125,3 +125,14 @@ void *hash_obtener(const hash_t *hash, const char *clave){
   }
   return nodo_hash->dato;
 }
+
+bool hash_pertenece(const hash_t *hash, const char *clave){
+  Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
+  hash_clave = hash_clave % (int)hash->largo;
+  nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
+  encontrar_nodo(hash, nodo_hash, clave, hash_clave);
+  if(nodo_hash==NULL || nodo_hash->estado==borrado){
+    return false;
+  }
+  return true;
+}
