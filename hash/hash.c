@@ -28,6 +28,26 @@ struct hash_iter{
   size_t pos;
 };
 
+void encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clave, Fnv32_t hash_clave){
+  Fnv32_t primer_hash = hash_clave;
+  while(nodo_hash->clave==NULL||strcmp(nodo_hash->clave,clave)){
+    if(hash_clave < hash->largo-1){
+      nodo_hash++;
+      hash_clave++;
+    }
+    else{
+      nodo_hash = hash->indice;
+      hash_clave = 0;
+    }
+    if(hash_clave == primer_hash){
+      nodo_hash=NULL;
+      break;
+    }
+
+  }
+  return;
+}
+
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
   hash_t *hash = malloc(sizeof(hash_t));
   if(hash==NULL){
@@ -86,27 +106,23 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
 void *hash_borrar(hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
-  Fnv32_t primer_hash= hash_clave;
   nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
-
-  while(nodo_hash->clave==NULL||strcmp(nodo_hash->clave,clave)){
-//    printf("DEBUG: %i\n", hash_clave);
-    if(hash_clave < hash->largo-1){
-      nodo_hash++;
-      hash_clave++;
-    }
-    else{
-      nodo_hash = hash->indice;
-      hash_clave = 0;
-    }
-    if(hash_clave == primer_hash){
-      return NULL;
-    }
-  }
+  encontrar_nodo(hash, nodo_hash, clave, hash_clave);
   if(nodo_hash->estado==borrado){
     return NULL;
   }
   nodo_hash->estado = borrado;
   hash->cant_elementos--;
+  return nodo_hash->dato;
+}
+
+void *hash_obtener(const hash_t *hash, const char *clave){
+  Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
+  hash_clave = hash_clave % (int)hash->largo;
+  nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
+  encontrar_nodo(hash, nodo_hash, clave, hash_clave);
+  if(nodo_hash==NULL || nodo_hash->estado==borrado){
+    return NULL;
+  }
   return nodo_hash->dato;
 }

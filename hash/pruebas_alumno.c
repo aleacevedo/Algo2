@@ -29,13 +29,18 @@ static void prueba_crear_hash_uno_alumno()
 {
     hash_t* hash = hash_crear(NULL);
     int i = 5;
+    int h = 10;
     //void *punt = &i;
     const char clave1[5]={'H','O','L','A','\0'};
     const char clave2[5]={'H','O','L','P','\0'};
     print_test("Prueba hash crear hash vacio", hash);
     print_test("Prueba insertar 1", hash_guardar(hash,clave1,&i));
+    print_test("Prueba obtener nada", !hash_obtener(hash,clave2));
     print_test("Prueba borra nada", !hash_borrar(hash,clave2));
+    print_test("Prueba obtener 1", hash_obtener(hash,clave1)==&i);
     print_test("Prueba borra 1", hash_borrar(hash,clave1)==&i);
+    print_test("Prueba insertar 1", hash_guardar(hash,clave1,&h));
+
 
 
     //print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
