@@ -40,8 +40,10 @@ static void prueba_crear_hash_uno_alumno()
     print_test("Prueba obtener 1", hash_obtener(hash,clave1)==&i);
     print_test("Prueba borra 1", hash_borrar(hash,clave1)==&i);
     print_test("Prueba insertar 1", hash_guardar(hash,clave1,&h));
+    print_test("Prueba obtener 1", hash_obtener(hash,clave1)==&h);
     print_test("Prueba pertenece", hash_pertenece(hash,clave1)==true);
-    print_test("Prueba pertenece", hash_pertenece(hash,clave2)==false);
+    print_test("Prueba no pertenece", hash_pertenece(hash,clave2)==false);
+    print_test("Prueba cantidad de elementos =1 ", (int)hash_cantidad(hash)==1);
 
 
 

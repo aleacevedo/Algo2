@@ -28,7 +28,7 @@ struct hash_iter{
   size_t pos;
 };
 
-void encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clave, Fnv32_t hash_clave){
+nodo_hash_t *encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clave, Fnv32_t hash_clave){
   Fnv32_t primer_hash = hash_clave;
   while(nodo_hash->clave==NULL||strcmp(nodo_hash->clave,clave)){
     if(hash_clave < hash->largo-1){
@@ -40,12 +40,11 @@ void encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clav
       hash_clave = 0;
     }
     if(hash_clave == primer_hash){
-      nodo_hash=NULL;
-      break;
+      return NULL;
     }
 
   }
-  return;
+  return nodo_hash;
 }
 
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
@@ -89,16 +88,18 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
       hash_clave = 0;
     }
   }
-  nodo_hash->clave = malloc(sizeof(char)*strlen(clave));
-  if(nodo_hash->clave==NULL){
-    return false;
+  if(nodo_hash->estado==vacio){
+    nodo_hash->clave = malloc(sizeof(char)*strlen(clave));
+    if(nodo_hash->clave==NULL){
+      return false;
+    }
   }
   for(int i = 0; i<strlen(clave); i++){
     nodo_hash->clave[i] = clave[i];
   }
   nodo_hash->dato = dato;
   nodo_hash->estado = ocupado;
-  hash->cant_elementos++;
+  hash->cant_elementos+=1;
   return true;
 }
 
@@ -106,12 +107,15 @@ void *hash_borrar(hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
   nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
-  encontrar_nodo(hash, nodo_hash, clave, hash_clave);
+  nodo_hash = encontrar_nodo(hash, nodo_hash, clave, hash_clave);
+  if(nodo_hash==NULL){
+    return NULL;
+  }
   if(nodo_hash->estado==borrado){
     return NULL;
   }
   nodo_hash->estado = borrado;
-  hash->cant_elementos--;
+  hash->cant_elementos-=1;
   return nodo_hash->dato;
 }
 
@@ -119,7 +123,7 @@ void *hash_obtener(const hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
   nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
-  encontrar_nodo(hash, nodo_hash, clave, hash_clave);
+  nodo_hash = encontrar_nodo(hash, nodo_hash, clave, hash_clave);
   if(nodo_hash==NULL || nodo_hash->estado==borrado){
     return NULL;
   }
@@ -130,9 +134,14 @@ bool hash_pertenece(const hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
   nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
-  encontrar_nodo(hash, nodo_hash, clave, hash_clave);
+  nodo_hash = encontrar_nodo(hash, nodo_hash, clave, hash_clave);
   if(nodo_hash==NULL || nodo_hash->estado==borrado){
     return false;
   }
   return true;
+}
+
+size_t hash_cantidad(const hash_t *hash){
+  size_t aux= hash->cant_elementos;
+  return aux;
 }
