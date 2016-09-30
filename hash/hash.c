@@ -115,7 +115,7 @@ void *hash_borrar(hash_t *hash, const char *clave){
   hash->cant_elementos--;
   return nodo_hash->dato;
 }
-
+/*alejo putooo*/
 void *hash_obtener(const hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
