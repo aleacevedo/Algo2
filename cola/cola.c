@@ -16,12 +16,15 @@ struct nodo {
 };
 
 /* *****************************************************************
- *                    PRIMITIVAS DE LA PILA
+ *                    PRIMITIVAS DE LA COLA
  * *****************************************************************/
 
 cola_t* cola_crear(){
   /*Crea una cola vacia, en caso de que no sea posible devuelve NULL*/
   cola_t *cola = malloc(sizeof(cola_t));
+  if(cola==NULL){
+    return NULL;
+  }
   cola->prim = NULL;
   cola->ultim = NULL;
   return cola;
@@ -61,7 +64,7 @@ bool cola_encolar(cola_t *cola, void *valor){
   nodo->prox = NULL;
   if(cola_esta_vacia(cola)){
     cola->prim = nodo;
-    cola->ultim = nodo;
+    //cola->ultim = nodo;
     return true;
   }
   cola->ultim->prox = nodo;
