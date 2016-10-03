@@ -25,6 +25,7 @@ struct hash{
 
 struct hash_iter{
   const hash_t *hash;
+  nodo_hash_t *actual;
   size_t pos;
 };
 
@@ -67,12 +68,12 @@ nodo_hash_t *encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const ch
 }
 
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
-  hash_t *hash = malloc(sizeof(hash_t));
+  hash_t *hash = calloc(sizeof(hash_t),1);
   if(hash==NULL){
     return NULL;
   }
   hash->destruir_dato = destruir_dato;
-  hash->indice = malloc(sizeof(nodo_hash_t)*TAM_INICIAL);
+  hash->indice = calloc(sizeof(nodo_hash_t),TAM_INICIAL);
   if(hash->indice==NULL){
     return NULL;
   }
@@ -182,4 +183,49 @@ void hash_destruir(hash_t *hash){
   free(hash);
 }
 
-//hash_iter_t *hash_iter_crear(const hash_t *hash);
+hash_iter_t *hash_iter_crear(const hash_t *hash){
+  hash_iter_t *hash_iter = calloc(sizeof(hash_iter_t),1);
+  if (hash_iter==NULL){
+    return NULL;
+  }
+  hash_iter->hash = hash;
+  hash_iter->actual = hash->indice;
+  while(hash_iter->actual->estado!=ocupado){
+    hash_iter_avanzar(hash_iter);
+  }
+  return hash_iter;
+}
+
+bool hash_iter_avanzar(hash_iter_t *iter){
+  if(hash_iter_al_final(iter)){
+    return false;
+  }
+  if(iter->pos==iter->hash->cant_elementos){
+    iter->pos++;
+    iter->actual = NULL;
+    return true;
+  }
+  while(iter->actual->estado!=ocupado){
+    iter->actual++;
+  }
+  iter->pos++;
+  return true;
+}
+
+const char *hash_iter_ver_actual(const hash_iter_t *iter){
+  if(hash_iter_al_final(iter)){
+    return NULL;
+  }
+  return iter->actual->clave;
+}
+
+bool hash_iter_al_final(const hash_iter_t *iter){
+  if(iter->pos>iter->hash->cant_elementos){
+    return true;
+  }
+  return false;
+}
+
+void hash_iter_destruir(hash_iter_t* iter){
+  free(iter);
+}
