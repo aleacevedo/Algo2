@@ -67,12 +67,12 @@ nodo_hash_t *encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const ch
 }
 
 hash_t *hash_crear_tam_mod(hash_destruir_dato_t destruir_dato, size_t tam){
-  hash_t *hash = calloc(sizeof(hash_t),1);
+  hash_t *hash = calloc(1,sizeof(hash_t));
   if(hash==NULL){
     return NULL;
   }
   hash->destruir_dato = destruir_dato;
-  hash->indice = calloc(sizeof(nodo_hash_t),tam);
+  hash->indice = calloc(tam, sizeof(nodo_hash_t));
   if(hash->indice==NULL){
     return NULL;
   }
@@ -82,20 +82,22 @@ hash_t *hash_crear_tam_mod(hash_destruir_dato_t destruir_dato, size_t tam){
 
 bool hash_redimencionar(hash_t *hash, size_t tam_nuevo){
   nodo_hash_t *aux = hash->indice;
-  hash->indice = calloc(sizeof(nodo_hash_t), tam_nuevo);
+  size_t tam_aux = hash->largo;
+  hash->indice = calloc(tam_nuevo, sizeof(nodo_hash_t));
   //hash_iter_t *iter = hash_iter_crear(hash);
-  if(hash->indice==NULL){
+  if(hash->indice==NULL || aux == NULL){
     hash->indice = aux;
     return false;
   }
+  hash->cant_elementos = 0;
+  hash->borrados = 0;
   hash->largo=tam_nuevo;
-  for(int i = 0; i<hash->largo; i++){
-    aux=aux+i;
-    if(aux->estado==ocupado){
-      hash_guardar(hash,aux->clave,aux->dato);
+  for(int i = 0; i<tam_aux; i++){
+    if(aux[i].estado==ocupado){
+      hash_guardar(hash,aux[i].clave,aux[i].dato);
     }
     if(aux->estado!=vacio){
-      free(aux->clave);
+      free(aux[i].clave);
     }
   }
   free(aux);
@@ -132,7 +134,7 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
     }
   }
   if(nodo_hash->estado==vacio){
-    nodo_hash->clave = calloc(sizeof(char),strlen(clave)+1);
+    nodo_hash->clave = calloc(strlen(clave)+1,sizeof(char));
     if(nodo_hash->clave==NULL){
       return false;
     }
@@ -145,7 +147,7 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
   hash->cant_elementos+=1;
   nodo_hash->estado = ocupado;
   if(calcular_carga(hash)>70){
-    hash_redimencionar(hash, hash->cant_elementos*100);
+    hash_redimencionar(hash, hash->largo*10);
   }
   return true;
 }
@@ -166,8 +168,8 @@ void *hash_borrar(hash_t *hash, const char *clave){
   hash->cant_elementos-=1;
   hash->borrados++;
   dato = nodo_hash->dato;
-  if(calcular_carga(hash)<10){
-    hash_redimencionar(hash, (hash->largo/2));
+  if(calcular_carga(hash)<5){
+    hash_redimencionar(hash, (hash->largo)/2);
   }
   return dato;
 }
@@ -215,7 +217,7 @@ void hash_destruir(hash_t *hash){
 }
 
 hash_iter_t *hash_iter_crear(const hash_t *hash){
-  hash_iter_t *hash_iter = calloc(sizeof(hash_iter_t),1);
+  hash_iter_t *hash_iter = calloc(1,sizeof(hash_iter_t));
   if (hash_iter==NULL){
     return NULL;
   }
