@@ -1,6 +1,6 @@
 #include "hash.h"
 
-#define TAM_INICIAL (100)
+#define TAM_INICIAL (5000)
 
 typedef enum state{
   vacio,
@@ -28,21 +28,40 @@ struct hash_iter{
   size_t pos;
 };
 
+nodo_hash_t *avanzar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clave, Fnv32_t *hash_clave){
+  if(*hash_clave < hash->largo-1){
+    nodo_hash++;
+    (*hash_clave)++;
+  }
+  else{
+    nodo_hash = hash->indice;
+    (*hash_clave) = 0;
+  }
+  return nodo_hash;
+}
+
+
 nodo_hash_t *encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clave, Fnv32_t hash_clave){
   Fnv32_t primer_hash = hash_clave;
-  while(nodo_hash->clave==NULL||strcmp(nodo_hash->clave,clave)){
-    if(hash_clave < hash->largo-1){
-      nodo_hash++;
-      hash_clave++;
-    }
-    else{
-      nodo_hash = hash->indice;
-      hash_clave = 0;
-    }
-    if(hash_clave == primer_hash){
+  int i =0;
+  while(nodo_hash->clave==NULL){
+    i++;
+    nodo_hash = avanzar_nodo(hash, nodo_hash, clave, &hash_clave);
+    if(hash_clave==primer_hash){
       return NULL;
     }
-
+  }
+  while(strcmp(nodo_hash->clave,clave)!=0){
+    nodo_hash = avanzar_nodo(hash, nodo_hash, clave, &hash_clave);
+    if(hash_clave==primer_hash){
+      return NULL;
+    }
+    while(nodo_hash->clave==NULL){
+      nodo_hash = avanzar_nodo(hash, nodo_hash, clave, &hash_clave);
+      if(hash_clave==primer_hash){
+        return NULL;
+      }
+    }
   }
   return nodo_hash;
 }
@@ -78,8 +97,9 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
     comp=strcmp(nodo_hash->clave,clave);
     if(comp == 0){
       nodo_hash->dato = dato;
+      return true;
     }
-    if(hash_clave<hash->largo){
+    if(hash_clave<hash->largo-1){
       nodo_hash++;
       hash_clave++;
     }
@@ -89,17 +109,18 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
     }
   }
   if(nodo_hash->estado==vacio){
-    nodo_hash->clave = malloc(sizeof(char)*strlen(clave));
+    nodo_hash->clave = calloc(sizeof(char),strlen(clave)+1);
     if(nodo_hash->clave==NULL){
       return false;
     }
   }
   for(int i = 0; i<strlen(clave); i++){
     nodo_hash->clave[i] = clave[i];
+
   }
   nodo_hash->dato = dato;
-  nodo_hash->estado = ocupado;
   hash->cant_elementos+=1;
+  nodo_hash->estado = ocupado;
   return true;
 }
 
@@ -145,3 +166,20 @@ size_t hash_cantidad(const hash_t *hash){
   size_t aux= hash->cant_elementos;
   return aux;
 }
+
+void hash_destruir(hash_t *hash){
+  nodo_hash_t *nodo_hash = hash->indice;
+  for(int i = 0; i<hash->largo; i++){
+    if(nodo_hash->estado != vacio){
+      free(nodo_hash->clave);
+      if(nodo_hash->estado == ocupado && hash->destruir_dato!=NULL){
+        hash->destruir_dato(nodo_hash->dato);
+      }
+    }
+    nodo_hash++;
+  }
+  free(hash->indice);
+  free(hash);
+}
+
+//hash_iter_t *hash_iter_crear(const hash_t *hash);
