@@ -1,6 +1,6 @@
 #include "hash.h"
 
-#define TAM_INICIAL (5000)
+#define TAM_INICIAL (100)
 
 typedef enum state{
   vacio,
@@ -41,7 +41,6 @@ nodo_hash_t *avanzar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char
   return nodo_hash;
 }
 
-
 nodo_hash_t *encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const char* clave, Fnv32_t hash_clave){
   Fnv32_t primer_hash = hash_clave;
   int i =0;
@@ -67,26 +66,49 @@ nodo_hash_t *encontrar_nodo(const hash_t *hash, nodo_hash_t *nodo_hash, const ch
   return nodo_hash;
 }
 
-hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
+hash_t *hash_crear_tam_mod(hash_destruir_dato_t destruir_dato, size_t tam){
   hash_t *hash = calloc(sizeof(hash_t),1);
   if(hash==NULL){
     return NULL;
   }
   hash->destruir_dato = destruir_dato;
-  hash->indice = calloc(sizeof(nodo_hash_t),TAM_INICIAL);
+  hash->indice = calloc(sizeof(nodo_hash_t),tam);
   if(hash->indice==NULL){
     return NULL;
   }
-  hash->largo = TAM_INICIAL;
-  hash->cant_elementos = 0;
-  hash->borrados = 0;
-  hash->n_mersenne = 0;
-  for(int i=0; i<TAM_INICIAL; i++){
-    hash->indice[i].dato=NULL;
-    hash->indice[i].estado=0;
-    hash->indice[i].clave=NULL;
-  }
+  hash->largo = tam;
   return hash;
+}
+
+bool hash_redimencionar(hash_t *hash, size_t tam_nuevo){
+  nodo_hash_t *aux = hash->indice;
+  hash->indice = calloc(sizeof(nodo_hash_t), tam_nuevo);
+  //hash_iter_t *iter = hash_iter_crear(hash);
+  if(hash->indice==NULL){
+    hash->indice = aux;
+    return false;
+  }
+  hash->largo=tam_nuevo;
+  for(int i = 0; i<hash->largo; i++){
+    aux=aux+i;
+    if(aux->estado==ocupado){
+      hash_guardar(hash,aux->clave,aux->dato);
+    }
+    if(aux->estado!=vacio){
+      free(aux->clave);
+    }
+  }
+  free(aux);
+  return true;
+}
+
+size_t calcular_carga(hash_t *hash){
+  size_t resultado = ((hash->borrados + hash->cant_elementos)/(hash->largo))*100;
+  return resultado;
+}
+
+hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
+  return hash_crear_tam_mod(destruir_dato, TAM_INICIAL);
 }
 
 bool hash_guardar(hash_t *hash, const char* clave, void* dato){
@@ -122,6 +144,9 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
   nodo_hash->dato = dato;
   hash->cant_elementos+=1;
   nodo_hash->estado = ocupado;
+  if(calcular_carga(hash)>70){
+    hash_redimencionar(hash, hash->cant_elementos*100);
+  }
   return true;
 }
 
@@ -129,6 +154,7 @@ void *hash_borrar(hash_t *hash, const char *clave){
   Fnv32_t hash_clave = fnv_32_str(clave, FNV1_32_INIT);
   hash_clave = hash_clave % (int)hash->largo;
   nodo_hash_t *nodo_hash = &(hash->indice[hash_clave]);
+  void *dato;
   nodo_hash = encontrar_nodo(hash, nodo_hash, clave, hash_clave);
   if(nodo_hash==NULL){
     return NULL;
@@ -138,7 +164,12 @@ void *hash_borrar(hash_t *hash, const char *clave){
   }
   nodo_hash->estado = borrado;
   hash->cant_elementos-=1;
-  return nodo_hash->dato;
+  hash->borrados++;
+  dato = nodo_hash->dato;
+  if(calcular_carga(hash)<10){
+    hash_redimencionar(hash, (hash->largo/2));
+  }
+  return dato;
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave){
@@ -164,7 +195,7 @@ bool hash_pertenece(const hash_t *hash, const char *clave){
 }
 
 size_t hash_cantidad(const hash_t *hash){
-  size_t aux= hash->cant_elementos;
+  size_t aux = hash->cant_elementos;
   return aux;
 }
 
@@ -190,8 +221,11 @@ hash_iter_t *hash_iter_crear(const hash_t *hash){
   }
   hash_iter->hash = hash;
   hash_iter->actual = hash->indice;
-  while(hash_iter->actual->estado!=ocupado){
-    hash_iter_avanzar(hash_iter);
+  hash_iter->pos = 1;
+  if(hash_iter->actual == NULL){
+    while(hash_iter->actual->estado!=ocupado){
+    hash_iter->actual++;
+    }
   }
   return hash_iter;
 }
