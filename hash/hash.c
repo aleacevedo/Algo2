@@ -64,20 +64,6 @@ nodo_hash_t *encontrar_nodo(const hash_t *hash, const char* clave){
   return nodo_hash;
 }
 
-hash_t *hash_crear_tam_mod(hash_destruir_dato_t destruir_dato, size_t tam){
-  hash_t *hash = calloc(1,sizeof(hash_t));
-  if(hash==NULL){
-    return NULL;
-  }
-  hash->destruir_dato = destruir_dato;
-  hash->indice = calloc(tam, sizeof(nodo_hash_t));
-  if(hash->indice==NULL){
-    return NULL;
-  }
-  hash->largo = tam;
-  return hash;
-}
-
 bool hash_redimensionar(hash_t *hash, size_t tam_nuevo){
   nodo_hash_t *aux = hash->indice;
   size_t tam_aux = hash->largo;
@@ -99,13 +85,25 @@ bool hash_redimensionar(hash_t *hash, size_t tam_nuevo){
   return true;
 }
 
-size_t calcular_carga(hash_t *hash){
-  size_t resultado = ((hash->cant_elementos)/(hash->largo))*100;
+float calcular_carga(hash_t *hash){
+  float cant_elementos = (float)(hash->cant_elementos);
+  float largo = (float)(hash->largo);
+  float resultado = ((cant_elementos)/(largo));
   return resultado;
 }
 
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
-  return hash_crear_tam_mod(destruir_dato, TAM_INICIAL);
+  hash_t *hash = calloc(1,sizeof(hash_t));
+  if(hash==NULL){
+    return NULL;
+  }
+  hash->destruir_dato = destruir_dato;
+  hash->indice = calloc(TAM_INICIAL, sizeof(nodo_hash_t));
+  if(hash->indice==NULL){
+    return NULL;
+  }
+  hash->largo = TAM_INICIAL;
+  return hash;
 }
 
 bool hash_guardar(hash_t *hash, const char* clave, void* dato){
@@ -127,8 +125,7 @@ bool hash_guardar(hash_t *hash, const char* clave, void* dato){
   nodo_hash->dato = dato;
   hash->cant_elementos+=1;
   nodo_hash->estado = ocupado;
-  if(calcular_carga(hash)>80){
-    printf("DEBUG Redim UP\n");
+  if(calcular_carga(hash)>0.80){
     hash_redimensionar(hash, hash->largo*5);
   }
   return true;
@@ -144,8 +141,7 @@ void *hash_borrar(hash_t *hash, const char *clave){
   free(nodo_hash->clave);
   hash->cant_elementos-=1;
   dato = nodo_hash->dato;
-  if(calcular_carga(hash)<5){
-    printf("DEBUG Redim DW\n");
+  if(calcular_carga(hash)<0.05){
     if(hash->cant_elementos==0){
       hash_redimensionar(hash, TAM_INICIAL);
     }
