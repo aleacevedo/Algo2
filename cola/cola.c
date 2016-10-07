@@ -23,7 +23,7 @@ cola_t* cola_crear(){
   /*Crea una cola vacia, en caso de que no sea posible devuelve NULL*/
   cola_t *cola = malloc(sizeof(cola_t));
   if(cola==NULL){
-    return NULL;
+    return false;
   }
   cola->prim = NULL;
   cola->ultim = NULL;
@@ -64,7 +64,7 @@ bool cola_encolar(cola_t *cola, void *valor){
   nodo->prox = NULL;
   if(cola_esta_vacia(cola)){
     cola->prim = nodo;
-    //cola->ultim = nodo;
+    cola->ultim = nodo;
     return true;
   }
   cola->ultim->prox = nodo;
@@ -74,12 +74,10 @@ bool cola_encolar(cola_t *cola, void *valor){
 
 void* cola_ver_primero(const cola_t *cola){
 /* Devuelve el primero de la lista, si esta vacia Devuelve null*/
-  void *aux;
   if(cola_esta_vacia(cola)){
     return NULL;
   }
-  aux=cola->prim->dato;
-  return aux;
+  return cola->prim->dato;
 }
 
 void* cola_desencolar(cola_t *cola){
