@@ -2,6 +2,9 @@ compile:
 	clear
 	clear
 	clear
+	gcc -g -std=c99 -Wall -Wconversion -Wno-sign-conversion -Werror -c pila/pila.c -o pila.o
 	gcc -g -std=c99 -Wall -Wconversion -Wno-sign-conversion -Werror paste.c -o paste
+	gcc -g -std=c99 -Wall -Wconversion -Wno-sign-conversion -Werror more.c -o more
+	gcc -g -std=c99 -Wall -Wconversion -Wno-sign-conversion -Werror dc.c pila.o -o dc
 	#./paste test1.txt test2.txt
-	valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./paste test1.txt test2.txt
+	valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./dc 
