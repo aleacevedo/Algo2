@@ -14,11 +14,16 @@ int main(){
   linea->caracteres = calloc(1, sizeof(char));
   linea->largo = 1;
   char entrada;
+  char *guardado;
   while(true){
     char  *aux;
-    scanf("%s", &entrada);
+    scanf("%c", &entrada);
     printf("%c\n", entrada);
-    printf("entrada %zu, char %zu\n", sizeof(entrada), sizeof(char));
+    if(letra=='\n'){
+     linea->largo--;
+     break;
+    }
+    //printf("entrada %zu, char %zu\n", sizeof(entrada), sizeof(char));
     linea->caracteres[linea->largo-1] = entrada;
     linea->largo+=1;
     aux=realloc(linea->caracteres, sizeof(char)*linea->largo);
@@ -28,6 +33,9 @@ int main(){
     }
     linea->caracteres = aux;
   }
+  for(int i = 0;i<linea->largo; i++){
+   if(linea->caracteres[i]==' '){
+     f
   free(linea->caracteres);
   free(linea);
 }
