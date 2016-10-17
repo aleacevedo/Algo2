@@ -17,6 +17,6 @@
  */
 char** split(const char* str, char sep);
 
-
+char* join(char** strv, char sep);
 
 #endif // CADENA_H
