@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "pila/pila.h"
+#include "cola/cola.h"
+
 
 typedef enum{
   ESPACIO,
@@ -35,7 +37,7 @@ int main(){
   while(true){
     char *guardado = NULL;
     pila_t *pila_num = pila_crear();
-    pila_t *pila_opp = pila_crear();
+    cola_t *cola_opp = cola_crear();
     linea_t *linea = calloc(1,sizeof(linea_t));
     size_t cont = 0;
     size_t capacidad = 0;
@@ -43,7 +45,7 @@ int main(){
     linea->largo = getline(&linea->caracteres, &capacidad, stdin);
     if(linea->largo==-1){
       pila_destruir(pila_num);
-      pila_destruir(pila_opp);
+      cola_destruir(cola_opp, NULL);
       free(linea->caracteres);
       free(linea);
       break;
@@ -60,7 +62,7 @@ int main(){
           pila_apilar(pila_num, num);
         }
         else{
-          pila_apilar(pila_opp, guardado);
+          cola_encolar(cola_opp, guardado);
         }
         i = 1;
         guardado = NULL;
@@ -80,12 +82,12 @@ int main(){
     if(es_numero(&linea->caracteres[cont-1])!=ESPACIO){
       guardado = realloc(guardado, sizeof(char)*i);
       guardado[i-1] = '\0';
-      pila_apilar(pila_opp, guardado);
+      cola_encolar(cola_opp, guardado);
     }
     free(linea->caracteres);
     free(linea);
-    while(!pila_esta_vacia(pila_opp)){
-      char *opp = pila_desapilar(pila_opp);
+    while(!cola_esta_vacia(cola_opp)){
+      char *opp = cola_desencolar(cola_opp);
       int *num1 = pila_desapilar(pila_num);
       int *num2 = pila_ver_tope(pila_num);
       if(*opp=='+'){
@@ -107,7 +109,7 @@ int main(){
     printf("%i\n",*(int*)pila_ver_tope(pila_num));
     free(pila_ver_tope(pila_num));
     pila_destruir(pila_num);
-    pila_destruir(pila_opp);
+    cola_destruir(cola_opp, NULL);
     //break;
   }
 }

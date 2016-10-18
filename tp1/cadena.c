@@ -3,6 +3,13 @@
 #include<string.h>
 #include<stdio.h>
 
+char* caracter_copy(char* cadena, int nwlen, char caracter){
+  cadena = realloc(cadena, sizeof(char)*nwlen);
+  if(cadena == NULL) return NULL;
+  cadena[nwlen-1] = caracter;
+  return cadena;
+}
+
 char** split(const char* str, char sep){
   char* aux = NULL;
   char** res = NULL;
@@ -10,13 +17,13 @@ char** split(const char* str, char sep){
   int contres = 1;
   for(int i = 0; i<=strlen(str); i++){
     if(str[i]!=sep){
-      aux = realloc(aux, sizeof(char)*cont);
-      aux[cont-1] = str[i];
+      aux = caracter_copy(aux, cont, str[i]);
+      if(aux == NULL) return NULL;
       cont++;
     }
     if(str[i]==sep||str[i]=='\0'){
-      aux = realloc(aux, sizeof(char)*cont);
-      aux[cont-1] = '\0';
+      aux = caracter_copy(aux, cont, '\0');
+      if(aux == NULL) return NULL;
       cont = 1;
       res = realloc(res, sizeof(char*)*contres);
       res[contres-1] = aux;
@@ -31,23 +38,23 @@ char** split(const char* str, char sep){
 
 char *join(char** strv, char sep){
   int cont = 0;
+  int i = 1;
   int contres = 1;
   char *res = NULL;
   while(strv[cont]!=NULL){
     if(strv[cont][contres-1]!='\0'){
-      res = realloc(res,sizeof(char)*contres);
-      res[contres-1] = strv[cont][contres-1];
+      res = caracter_copy(res, i, strv[cont][contres-1]);
+      if(res == NULL) return NULL;
       contres++;
     }
     else{
-      res = realloc(res,sizeof(char)*contres);
-      res[contres-1] = sep;
+      res = caracter_copy(res, i, sep);
+      if(res == NULL) return NULL;
       contres = 1;
       cont++;
     }
-    contres++;
+    i++;
   }
+  res[i-2] = '\0';
   return res;
 }
-
-
