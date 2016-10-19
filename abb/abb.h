@@ -2,8 +2,9 @@
 #define ABB_H
 
 #include <stdlib.h>
-#include <bool.h>
+#include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 
 /* Defino estructuras abb abb_nodo y abb_iter */
