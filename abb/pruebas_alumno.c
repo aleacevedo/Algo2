@@ -36,7 +36,7 @@ static void prueba_abb_volumen(size_t largo, bool debug)
     for (size_t i = 0; i < largo; i++) {
         ok = abb_borrar(abb, claves[i]) == valores[i];
         free(valores[i]);
-        printf("DEBUG %zu\n",i);
+        printf("DEBUG %s\n",claves[i]);
         if (!ok) break;
     }
     if (debug) print_test("Prueba hash borrar muchos elementos", ok);
