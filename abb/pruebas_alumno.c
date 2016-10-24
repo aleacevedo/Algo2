@@ -25,7 +25,7 @@ static void prueba_abb_volumen(size_t largo, bool debug)
     srand(125);
     for (unsigned i = 0; i < largo; i++) {
         valores[i] = malloc(sizeof(int));
-        sprintf(claves[i], "%08d", rand()%100000);
+        sprintf(claves[i], "%08d", rand()%100);
         *valores[i] = i;
         ok = abb_guardar(abb, claves[i], valores[i]);
         if (!ok) break;
@@ -48,5 +48,5 @@ static void prueba_abb_volumen(size_t largo, bool debug)
 
 void pruebas_abb_alumno(){
   prueba_abb_vacio();
-  prueba_abb_volumen(98, true);
+  prueba_abb_volumen(100, true);
 }
