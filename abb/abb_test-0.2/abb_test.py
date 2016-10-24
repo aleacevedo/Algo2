@@ -147,31 +147,31 @@ class TestABB(unittest.TestCase):
   # Funciones internas.
 
   def guardar(self, key):
-    self.seq.append(("G", key))
-    return bool(self._communicate("G", key))
+    self.seq.append(('G', key))
+    return bool(self._communicate('G', key))
 
   def borrar(self, key):
-    self.seq.append(("B", key))
-    return self._communicate("B", key)
+    self.seq.append(('B', key))
+    return self._communicate('B', key)
 
   def cantidad(self):
-    return self._communicate("C")
+    return self._communicate('C')
 
   def pertenece(self, key):
-    return bool(self._communicate("P", key))
+    return bool(self._communicate('P', key))
 
   def obtener(self, key):
-    return self._communicate("O", key)
+    return self._communicate('O', key)
 
   def reemplazar(self, key):
-    self.seq.append(("R", key))
-    return bool(self._communicate("R", key))
+    self.seq.append(('R', key))
+    return bool(self._communicate('R', key))
 
   def reset(self):
     self.seq = []
-    return self._communicate("X")
+    return self._communicate('X')
 
-  def _communicate(self, cmd, key=""):
+  def _communicate(self, cmd, key=''):
     self.proc.stdin.write("{}{}\n".format(cmd, key))
     self.proc.stdin.flush()
 

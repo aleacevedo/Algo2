@@ -13,8 +13,7 @@ void prueba_abb_vacio(){
 
 static void prueba_abb_volumen(size_t largo, bool debug)
 {
-    abb_t* abb = abb_crear(strcmp,NULL);
-
+    abb_t* abb = abb_crear(strcmp,free);
     const size_t largo_clave = 10;
     char (*claves)[largo_clave] = malloc(largo * largo_clave);
 
@@ -31,22 +30,24 @@ static void prueba_abb_volumen(size_t largo, bool debug)
         if (!ok) break;
     }
     if (debug) print_test("Prueba abb almacenar muchos elementos", ok);
+    printf("Cantidad %zu\n", abb_cantidad(abb));
     for (size_t i = 0; i < largo; i++) {
         unsigned *b;
-        b = (unsigned *)abb_borrar(abb, claves[i]);
-        ok = (b == valores[i]);
+        if(abb_pertenece(abb,claves[i])){
+          b = (unsigned *)abb_borrar(abb, claves[i]);
+          ok = (b == valores[i]);
+        }
         free(valores[i]);
-        valores[i] = NULL;
         printf("%p \n",valores[i]);
         if (!ok) break;
     }
     if (debug) print_test("Prueba hash borrar muchos elementos", ok);
     free(claves);
-    free(abb);
-
+    printf("Cantidad %zu\n", abb_cantidad(abb));
+    abb_destruir(abb);
 }
 
 void pruebas_abb_alumno(){
   prueba_abb_vacio();
-  prueba_abb_volumen(100, true);
+  prueba_abb_volumen(10, true);
 }
