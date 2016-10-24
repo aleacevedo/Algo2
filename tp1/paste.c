@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
+  #define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -40,6 +40,8 @@ bool leer_linea(char** guardado, size_t* longitud_vieja, FILE *archivo){
 }
 
 int main(int argc, char* argv[]){
+  /* Recibe por parametro dos archivos, imprime alternando una linea de Cada
+  archivo por salida estandar separados por un tab*/
   char *guardado = NULL;
   if(argc!=ENTRADAS_MAX){
     printf("Maximo 2 entradas, NO: %i\n", argc);

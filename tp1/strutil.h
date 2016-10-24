@@ -1,11 +1,11 @@
-#ifndef CADENA_H
-#define CADENA_H
+#ifndef STRUTIL_H
+#define STRUTIL_H
 
+#include <stddef.h>
 #include<stdbool.h>
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
-
 /*
  * Devuelve en un arreglo dinámico terminado en NULL con todos los subsegmentos
  * de ‘str’ separados por el carácter ‘sep’. Tanto el arreglo devuelto como las
@@ -17,6 +17,18 @@
  */
 char** split(const char* str, char sep);
 
+/*
+ * Devuelve una cadena, allocada dinámicamente, resultado de unir todas las
+ * cadenas del arreglo terminado en NULL ‘strv’.
+ *
+ * Quien llama a la función toma responsabilidad de la memoria dinámica de la
+ * cadena devuelta. La función devuelve NULL si no se pudo allocar memoria.
+ */
 char* join(char** strv, char sep);
 
-#endif // CADENA_H
+/*
+ * Libera un arreglo dinámico de cadenas, y todas las cadenas que contiene.
+ */
+void free_strv(char* strv[]);
+
+#endif  // STRUTIL_H

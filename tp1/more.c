@@ -4,6 +4,8 @@
 #include<stdbool.h>
 
 bool leer_linea(FILE *archivo, char** linea){
+  /*Lee una linea por archivo y la guarda en el puntero pasado por parametro
+  Si esta al final del archivo devuelvo false*/
   size_t capacidad = 0;
   size_t longitud = getline(linea, &capacidad, archivo);
   if(longitud==-1){
@@ -33,5 +35,6 @@ int main(int argc, char* argv[]){
     getchar();
   }
   free(linea);
+  fclose(archivo);
   return 0;
 }

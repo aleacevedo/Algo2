@@ -3,6 +3,7 @@
 #include <string.h>
 #include "abb.h"
 #include "testing.h"
+#include <time.h>
 
 void prueba_abb_vacio(){
  abb_t *abb = abb_crear(strcmp, free);
@@ -21,34 +22,31 @@ static void prueba_abb_volumen(size_t largo, bool debug)
 
     /* Inserta 'largo' parejas en el hash */
     bool ok = true;
+    srand(125);
     for (unsigned i = 0; i < largo; i++) {
         valores[i] = malloc(sizeof(int));
-        sprintf(claves[i], "%08d", rand()%1000);
+        sprintf(claves[i], "%08d", rand()%100000);
         *valores[i] = i;
         ok = abb_guardar(abb, claves[i], valores[i]);
         if (!ok) break;
     }
-
     if (debug) print_test("Prueba abb almacenar muchos elementos", ok);
-
-
-    /* Verifica que borre y devuelva los valores correctos */
     for (size_t i = 0; i < largo; i++) {
-        ok = abb_borrar(abb, claves[i]) == valores[i];
+        unsigned *b;
+        b = (unsigned *)abb_borrar(abb, claves[i]);
+        ok = (b == valores[i]);
         free(valores[i]);
-        printf("DEBUG %s\n",claves[i]);
+        valores[i] = NULL;
+        printf("%p \n",valores[i]);
         if (!ok) break;
     }
     if (debug) print_test("Prueba hash borrar muchos elementos", ok);
-
-
     free(claves);
-    /* Destruye el hash - debería liberar los enteros */
     free(abb);
 
 }
 
 void pruebas_abb_alumno(){
   prueba_abb_vacio();
-  prueba_abb_volumen(10, true);
+  prueba_abb_volumen(98, true);
 }

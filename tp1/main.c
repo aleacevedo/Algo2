@@ -1,9 +1,9 @@
-#include"cadena.h"
+#include"strutil.h"
 
 char** split(const char* str, char sep);
 
 int main(){
-  char *str = {"ab,jo,lk,"};
+  char *str = {","};
   char **strsplit;
   char *nwstr = NULL;
   int i = 0;
@@ -11,17 +11,11 @@ int main(){
   strsplit = split(str, ',');
   while(strsplit[i]!=NULL){
     printf("%s\n", strsplit[i]);
-    //free(strsplit[i]);
     i++;
   }
   nwstr = join(strsplit, ';');
   printf("%s\n",nwstr);
-  i = 0;
-  while(strsplit[i]!=NULL){
-    free(strsplit[i]);
-    i++;
-  }
+  free_strv(strsplit);
   free(nwstr);
-  free(strsplit);
   return 0;
 }

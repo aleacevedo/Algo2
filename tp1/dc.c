@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "pila/pila.h"
-#include "cola/cola.h"
+#include "pila.h"
+#include "cola.h"
 
 
 typedef enum{
@@ -34,6 +34,8 @@ tipo_t es_numero(char* caracter){
 }
 
 int main(){
+  /* Calculadora polaca inversa, recibe por entrada estandar la cuenta a realizar
+  Cada numero y operador debe estar separado por un espacio*/
   while(true){
     char *guardado = NULL;
     pila_t *pila_num = pila_crear();
@@ -110,6 +112,5 @@ int main(){
     free(pila_ver_tope(pila_num));
     pila_destruir(pila_num);
     cola_destruir(cola_opp, NULL);
-    //break;
   }
 }
