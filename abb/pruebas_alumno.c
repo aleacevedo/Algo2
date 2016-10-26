@@ -23,7 +23,7 @@ static void prueba_abb_volumen(size_t largo, bool debug)
 {
     abb_t* abb = abb_crear(strcmp,free);
     const size_t largo_clave = 10;
-    char (*claves)[largo_clave] = malloc(largo * largo_clave);
+    char (*claves)[largo_clave] = malloc(largo * largo_clave);  
     unsigned* valores[largo];
     /* Inserta 'largo' parejas en el hash */
     bool ok = true;
