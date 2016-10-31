@@ -8,7 +8,7 @@ CFLAGS += -Werror
 test: abb_aux
 	./abb_test.py
 
-abb_aux: ../abb.o abb_aux.o
+abb_aux:  ../pila.o ../abb.o abb_aux.o
 
 # Dependencias adicionales.
 -include deps.mk
