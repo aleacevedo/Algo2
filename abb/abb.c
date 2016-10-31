@@ -47,6 +47,8 @@ bool _abb_guardar(abb_t *abb, nodo_abb_t **actual, nodo_abb_t *nuevo){
   }
   int compare = abb->cmp((*actual)->clave,nuevo->clave);
   if(compare==0){
+    abb->cantidad--;
+    if(abb->destruir_dato) abb->destruir_dato((*actual)->dato);
     (*actual)->dato = nuevo->dato;
     free(nuevo->clave);
     free(nuevo);
@@ -104,12 +106,12 @@ nodo_abb_t* _abb_buscar_mayor(nodo_abb_t **actual, nodo_abb_t **padre){
   return *actual;
 }
 
-void _abb_in_order(abb_t *arbol, bool visitar(const char *, void *, void *), void *extra,nodo_abb_t** nodo){
-  if(!(*nodo)) return;
-  _abb_in_order(arbol, visitar, &extra, &((*nodo)->izq));
-  visitar((*nodo)->clave, (*nodo)->dato, extra);
-  _abb_in_order(arbol, visitar, &extra, &((*nodo)->der));
-  return;
+bool _abb_in_order(abb_t *arbol, bool visitar(const char *, void *, void *), void *extra,nodo_abb_t** nodo){
+  if(!(*nodo)) return true;
+  if(!(_abb_in_order(arbol, visitar, extra, &((*nodo)->izq)))) return false;
+  if(!(visitar((*nodo)->clave, (*nodo)->dato, extra))) return false;
+  if(!(_abb_in_order(arbol, visitar, extra, &((*nodo)->der)))) return false;
+  return true;
 }
 
 abb_t* abb_crear(abb_comparar_clave_t cmp, abb_destruir_dato_t destruir_dato){
@@ -243,6 +245,7 @@ bool abb_iter_in_avanzar(abb_iter_t *iter){
 
 const char* abb_iter_in_ver_actual(const abb_iter_t *iter){
   nodo_abb_t *actual = pila_ver_tope(iter->pila);
+  if(!actual) return NULL;
   return actual->clave;
 }
 
