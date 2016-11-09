@@ -34,7 +34,7 @@ void _downheap(void **datos, size_t i, size_t cantidad, cmp_func_t cmp){
 
 void _heapify(void *elementos[], size_t cant, cmp_func_t cmp){
   size_t i = cant/2;
-  while(i >= 0){
+  while(i > 0){
     _downheap(elementos,i,cant,cmp);
     i--;
   }

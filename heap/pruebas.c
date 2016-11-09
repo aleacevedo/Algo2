@@ -1,7 +1,6 @@
 #include "pruebas.h"
 
 int comp_ent(const void *a, const void *b){
-  printf("DEBUG %i %i\n", *(int*)a, *(int*)b);
   if(*(int*)a<*(int*)b){
     return -1;
   }
@@ -11,16 +10,22 @@ int comp_ent(const void *a, const void *b){
   return 0;
 }
 
-void prueba_sort(){
-   int *valores[10];
-   for(int i = 0; i<10; i++){
+void prueba_sort(int largo){
+   int *valores[largo];
+   bool ok = true;
+   for(int i = 0; i<largo; i++){
      valores[i] = malloc(sizeof(int));
      *valores[i] = i;
+
    }
    heap_sort((void**)valores, 10, comp_ent);
-   for(int i = 0; i<10; i++){
-     printf("%i\n",*valores[i]);
+   for(int i = largo-1; i>=0; i--){
+     ok = (*valores[i] == largo-i-1);
+     printf("%i, %i\n",*valores[i],largo-i-1);
+     //if(!ok) break;
+     //free(valores[i]);
    }
+   print_test("Prueba heap_sort", ok);
 }
 
 void prueba_heap_vacio(){
@@ -51,7 +56,7 @@ void prueba_heap_4(){
 }
 
 void pruebas_heap_alumno(){
-  prueba_sort();
+  prueba_sort(10);
   prueba_heap_vacio();
   prueba_heap_4();
 }
