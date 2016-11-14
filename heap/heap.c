@@ -1,5 +1,9 @@
 #define TAM_INICIAL 10
 #include "heap.h"
+#include <stdbool.h>  /* bool */
+#include <stddef.h>	  /* size_t */
+#include <stdlib.h>
+#include <stdio.h>
 
 struct heap{
   void** dato;
@@ -19,34 +23,31 @@ void _downheap(void **datos, size_t i, size_t cantidad, cmp_func_t cmp){
   if (i>=cantidad) return;
   size_t pos_h_izq = (2 * i) + 1;
   size_t pos_h_der = pos_h_izq + 1;
-  size_t pos_mayor = 0;
+  size_t pos_mayor = i;
   if(pos_h_izq<cantidad&&(cmp(datos[i],datos[pos_h_izq])<0)){
     pos_mayor = pos_h_izq;
   }
   if(pos_h_der<cantidad&&(cmp(datos[pos_mayor],datos[pos_h_der])<0)){
     pos_mayor = pos_h_der;
   }
-  if (pos_mayor>0){
+  if (pos_mayor != i){
     _swap(datos, i, pos_mayor);
     _downheap(datos,pos_mayor,cantidad,cmp);
   }
 }
 
 void _heapify(void *elementos[], size_t cant, cmp_func_t cmp){
-  size_t i = cant/2;
-  while(i > 0){
-    _downheap(elementos,i,cant,cmp);
-    i--;
-    printf("%zu\n", i);
+  for(size_t i = cant/2 - 1; i !=-1; i--){
+    _downheap(elementos, i, cant, cmp);
   }
-  //_downheap(elementos,i,cant,cmp);
 }
 
 bool _heap_redimensionar(heap_t *heap, size_t tam_nuevo){
-    void *aux = realloc(heap->dato, tam_nuevo);
-    if(!aux) return false;
-    heap->dato = aux;
-    return true;
+  void *aux = realloc(heap->dato, sizeof(void*)*tam_nuevo);
+  if(!aux) return false;
+  heap->dato = aux;
+  heap->tam = tam_nuevo;
+  return true;
 }
 
 
@@ -133,26 +134,11 @@ void* heap_desencolar(heap_t *heap){
 }
 
 void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
-	printf("Arreglo");
-	for(int i = 0; i<cant; i++){
-		printf("|%i|", *(int*)elementos[i]);
-	}
-	printf("\n");
-    _heapify(elementos,cant,cmp);
-    printf("Arreglo");
-	for(int i = 0; i<cant; i++){
-		printf("|%i|", *(int*)elementos[i]);
-	}
-	printf("\n");
-    size_t i=0;
-    while(i < cant){
-        _swap(elementos,0,cant-i-1);
-        _downheap(elementos,0,cant-i-1,cmp);
-         i++;
-    }
-    printf("Arreglo");
-	for(int h = 0; h<cant; h++){
-		printf("|%i|", *(int*)elementos[h]);
-	}
-	printf("\n");
+  _heapify(elementos,cant,cmp);
+  size_t i=cant-1;
+  while(i < cant){
+    _swap(elementos,0,i);
+    _downheap(elementos,0,  i,cmp);
+    i--;
+  }
 }

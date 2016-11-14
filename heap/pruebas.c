@@ -1,4 +1,10 @@
-#include "pruebas.h"
+#include "testing.h"
+#include "heap.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>  /* bool */
+#include <stddef.h>	  /* size_t */
+#include <string.h>
 
 int comp_ent(const void *a, const void *b){
   if(*(int*)a<*(int*)b){
@@ -11,21 +17,44 @@ int comp_ent(const void *a, const void *b){
 }
 
 void prueba_sort(int largo){
-   int *valores[largo];
-   bool ok = true;
-   for(int i = 0; i<largo; i++){
-     valores[i] = malloc(sizeof(int));
-     *valores[i] = i;
+  int *valores[largo];
+  bool ok = true;
+  for(int i = 0; i<largo; i++){
+    valores[i] = malloc(sizeof(int));
+    *valores[i] = largo-i-1;
+  }
+  heap_sort((void**)valores, 10, comp_ent);
+  for(int i = largo-1; i>=0; i--){
+    ok = (*valores[i] == i);
+    if(!ok) break;
+    free(valores[i]);
+  }
+}
 
-   }
-   heap_sort((void**)valores, 10, comp_ent);
-   for(int i = largo-1; i>=0; i--){
-     ok = (*valores[i] == largo-i-1);
-     printf("%i, %i\n",*valores[i],largo-i-1);
-     //if(!ok) break;
-     //free(valores[i]);
-   }
-   print_test("Prueba heap_sort", ok);
+void prueba_heap_mil(int largo){
+  heap_t *heap = heap_crear(comp_ent);
+  int *valores[largo];
+  bool ok = true;
+  print_test("Prueba heap el heap esta vacio", heap_esta_vacio(heap));
+  for(int i = 0; i<largo; i++){
+    valores[i] = malloc(sizeof(int));
+    *valores[i] = rand();
+    ok = heap_encolar(heap, valores[i]);
+    if(!ok) break;
+  }
+  print_test("Prueba heap enconlar muchos", ok);
+  heap_sort((void**)valores, largo, comp_ent);
+  print_test("Prueba heap el heap esta vacio", !heap_esta_vacio(heap));
+  print_test("Prueba heap la cantidad es correcta", heap_cantidad(heap) == largo);
+  for(int i = largo-1; i>=0; i--){
+    ok = (*valores[i] == *(int*)heap_ver_max(heap));
+    ok = (*valores[i] == *(int*)heap_desencolar(heap));
+    if(!ok) break;
+    free(valores[i]);
+  }
+  print_test("Prueba heap desencolar muchos", ok);
+  print_test("Prueba heap el heap esta vacio", heap_esta_vacio(heap));
+  heap_destruir(heap, NULL);
 }
 
 void prueba_heap_vacio(){
@@ -55,8 +84,25 @@ void prueba_heap_4(){
   heap_destruir(heap,NULL);
 }
 
+void prueba_heap_10(){
+  heap_t *heap = heap_crear(comp_ent);
+  bool ok = true;
+  int largo = 10;
+  int *punteros[largo];
+  for(int i=0; i<largo;i++){
+    punteros[i] = calloc(1, sizeof(int));
+    ok = heap_encolar(heap, punteros[i]);
+    *punteros[i] = i;
+    if(ok) break;
+  }
+  print_test("Prueba heap encolar 10 punteros", ok);
+  heap_destruir(heap, free);
+}
+
 void pruebas_heap_alumno(){
-  prueba_sort(10);
   prueba_heap_vacio();
   prueba_heap_4();
+  prueba_heap_10();
+  prueba_heap_mil(1000);
+  prueba_sort(10);
 }
