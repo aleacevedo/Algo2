@@ -37,7 +37,9 @@ void _heapify(void *elementos[], size_t cant, cmp_func_t cmp){
   while(i > 0){
     _downheap(elementos,i,cant,cmp);
     i--;
+    printf("%zu\n", i);
   }
+  //_downheap(elementos,i,cant,cmp);
 }
 
 bool _heap_redimensionar(heap_t *heap, size_t tam_nuevo){
@@ -131,11 +133,26 @@ void* heap_desencolar(heap_t *heap){
 }
 
 void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
+	printf("Arreglo");
+	for(int i = 0; i<cant; i++){
+		printf("|%i|", *(int*)elementos[i]);
+	}
+	printf("\n");
     _heapify(elementos,cant,cmp);
+    printf("Arreglo");
+	for(int i = 0; i<cant; i++){
+		printf("|%i|", *(int*)elementos[i]);
+	}
+	printf("\n");
     size_t i=0;
     while(i < cant){
         _swap(elementos,0,cant-i-1);
         _downheap(elementos,0,cant-i-1,cmp);
          i++;
     }
+    printf("Arreglo");
+	for(int h = 0; h<cant; h++){
+		printf("|%i|", *(int*)elementos[h]);
+	}
+	printf("\n");
 }
