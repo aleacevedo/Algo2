@@ -87,4 +87,6 @@ void *heap_desencolar(heap_t *heap);
 
 void pruebas_heap_alumno(void);
 
+void heap_actualizar_prioridad(heap_t *heap, void *dato);
+
 #endif // HEAP_H

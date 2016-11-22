@@ -36,6 +36,14 @@ void _downheap(void **datos, size_t i, size_t cantidad, cmp_func_t cmp){
   }
 }
 
+size_t _buscar_pos(heap_t *heap, void *dato){
+	size_t i = 0;
+	while(heap->cantidad>i){
+		if(dato==heap->dato[i]) return i;
+		i++;
+	}
+	return -1;
+}
 void _heapify(void *elementos[], size_t cant, cmp_func_t cmp){
   for(size_t i = cant/2 - 1; i !=-1; i--){
     _downheap(elementos, i, cant, cmp);
@@ -141,4 +149,17 @@ void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
     _downheap(elementos,0,  i,cmp);
     i--;
   }
+}
+
+void heap_actualizar_prioridad(heap_t *heap, void *dato){
+	size_t pos = _buscar_pos(heap, dato);
+	size_t pos_padre = (pos-1)/2;
+	size_t pos_h_izq = (pos*2)+1;
+	size_t pos_h_der = (pos*2)+2;
+	if(pos_padre<heap->cantidad && heap->cmp(heap->dato[pos],heap->dato[pos_padre])>0){
+		_upheap(heap->dato, pos, heap->cmp);
+	}
+	else if((heap->cantidad>pos_h_izq && heap->cmp(heap->dato[pos],heap->dato[pos_h_izq])<0)||(heap->cantidad>pos_h_der && heap->cmp(heap->dato[pos],heap->dato[pos_h_der])<0)){
+		_downheap(heap->dato, pos, heap->cantidad, heap->cmp);
+	}
 }
