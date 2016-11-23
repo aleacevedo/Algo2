@@ -45,7 +45,7 @@ int main(){
     size_t capacidad = 0;
     linea->caracteres = NULL;
     linea->largo = getline(&linea->caracteres, &capacidad, stdin);
-    if(linea->largo==-1){
+    if(linea->largo==-1||linea->largo==1){
       pila_destruir(pila_num);
       cola_destruir(cola_opp, NULL);
       free(linea->caracteres);
