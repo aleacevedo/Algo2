@@ -203,10 +203,41 @@ static void prueba_abb_volumen(size_t largo, bool debug){
     abb_destruir(abb);
 }
 
+void prueba_abb_items() {
+  abb_t* abb = abb_crear(strcmp,free);
+  const size_t largo_clave = 10;
+  size_t largo = 12;
+  char (*claves)[largo_clave] = malloc(largo * largo_clave);
+  unsigned* valores[largo];
+  bool ok = true;
+  int *clave_ord;
+  int *clave = crear_claves(&clave_ord);
+  for (unsigned i = 0; i < largo; i++) {
+    sprintf(claves[i], "%08d", clave[i]);
+    if(!abb_pertenece(abb, claves[i])){
+      valores[i] = malloc(sizeof(int));
+      *valores[i] = i;
+      ok = abb_guardar(abb, claves[i], valores[i]);
+      unsigned int a = *(unsigned int*)valores[i];
+      printf("Clave: %s Valor: %u\n", claves[i], a);
+    }
+    if (!ok) break;
+  }
+  print_test("Prueba abb almacenar 12 elementos", ok);
+  abb_item_t* items = abb_obtener_items(abb);
+  int j = 0;
+  while(j<abb_cantidad(abb)){
+    printf("Clave = %s\t Valor = %i\n", items[j].clave,*(int*) items[j].valor);
+    j++;
+  }
+
+}
+
 void pruebas_abb_alumno(){
   prueba_abb_vacio();
   prueba_abb_volumen(1000, true);
   prueba_abb_iter();
   prueba_abb_pisar();
   prueba_iter_post();
+  prueba_abb_items();
 }

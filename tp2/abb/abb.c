@@ -1,4 +1,4 @@
-#include"abb.h"
+#include "abb.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -11,25 +11,26 @@ typedef struct abb abb_t;
 
 typedef struct abb_iter abb_iter_t;
 
+typedef struct abb_iter_post abb_iter_post_t;
+
+ typedef struct abb_item abb_item_t;
+
 struct nodo_abb{
   char *clave;
   void *dato;
   nodo_abb_t *izq;
   nodo_abb_t *der;
 };
-
 struct abb{
   nodo_abb_t *raiz;
   abb_comparar_clave_t cmp;
   abb_destruir_dato_t destruir_dato;
   size_t cantidad;
 };
-
 struct abb_iter{
   const abb_t* arbol;
   pila_t* pila;
 };
-
 struct abb_iter_post{
   const abb_t* arbol;
   pila_t* pila;
@@ -276,7 +277,6 @@ bool _iter_post_desapilar(abb_iter_post_t* iter){
   return false;
 }
 
-
 abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
   abb_iter_t *iter = calloc(1, sizeof(abb_iter_t));
   if(!iter) return NULL;
@@ -346,4 +346,24 @@ bool  abb_iter_post_al_final(const abb_iter_post_t* iter){
 void  abb_iter_post_destruir(abb_iter_post_t* iter){
   pila_destruir(iter->pila);
   free(iter);
+}
+
+abb_item_t* abb_obtener_items(const abb_t* abb){
+  if(!abb) return NULL;
+  size_t tam_arreglo = abb->cantidad;
+  abb_item_t* extra = calloc(tam_arreglo, sizeof(abb_item_t));
+  if(!extra) return NULL;
+  abb_iter_t* iter = abb_iter_in_crear(abb);
+  if(!iter) return NULL;
+  int i = 0;
+  while(!abb_iter_in_al_final(iter)){
+    const char* clave = abb_iter_in_ver_actual(iter);
+    char* copia_clave = calloc(strlen(clave)+1, sizeof(char));
+    if(!copia_clave) return NULL;
+    strcpy(copia_clave,clave);
+    extra[i].clave = copia_clave;
+    extra[i].valor = abb_obtener(abb,clave);
+    abb_iter_in_avanzar(iter);
+  }
+  return extra;
 }

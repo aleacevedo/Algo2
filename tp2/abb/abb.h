@@ -7,17 +7,22 @@
 #include <stdio.h>
 #include "pila.h"
 
-
-
 /* Defino estructuras abb abb_nodo y abb_iter */
 struct abb;
 struct nodo_abb;
 struct abb_iter;
+struct abb_iter_post;
+
+struct abb_item{
+  const char* clave;
+  void* valor;
+};
 
 typedef struct abb abb_t;
 typedef struct nodo_abb nodo_abb_t;
 typedef struct abb_iter abb_iter_t;
 typedef struct abb_iter_post abb_iter_post_t;
+typedef struct abb_item abb_item_t;
 
 /* Defino funciones de orden superiro */
 
@@ -49,5 +54,7 @@ bool  abb_iter_post_avanzar(abb_iter_post_t* iter);
 const char*  abb_iter_post_ver_actual(const abb_iter_post_t* iter);
 bool  abb_iter_post_al_final(const abb_iter_post_t* iter);
 void  abb_iter_post_destruir(abb_iter_post_t* iter);
+
+abb_item_t* abb_obtener_items(const abb_t*);
 
 #endif //ABB_H
