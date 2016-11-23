@@ -4,8 +4,11 @@ CFLAGS += -Wconversion -Wno-sign-conversion -Wbad-function-cast
 CFLAGS += -Werror
 
 
-all: pila.o cola.o paste more dc strutil.o
+all: pila.o cola.o paste more strutil.o
 include deps.mk
 
 run: main
 	valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./main
+
+rundc: dc
+	valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./dc
