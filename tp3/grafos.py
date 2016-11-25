@@ -39,4 +39,9 @@ class Grafos:
             self.vertices[id].valor = valor
 
     def __delitem__(self, id):
-        if(self.vertices.get(id)==None):
+        if(self.vertices.get(id)!=None):
+            del self.vertices[id]
+            del self.adyacencias[id]
+            key = self.keys()
+            for i in key:
+                del self.adyacencias[i][id]
