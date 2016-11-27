@@ -86,14 +86,11 @@ heap_t *heap_crear(cmp_func_t cmp){
 heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
   heap_t* heap = calloc(1,sizeof(heap_t));
   if(!heap) return NULL;
-  *heap->dato = calloc(TAM_INICIAL,sizeof(void*));
-  if(!*heap->dato){
-    free(heap);
-    return NULL;
-  }
-  for(int i =0;i<n;i++){
-    if(!heap_encolar(heap,cmp)); free(heap->dato); free(heap); return NULL;
-  }
+  heap->dato = arreglo;
+  heap->tam = n;
+  heap->cantidad = n;
+  heap->cmp = cmp;
+  _heapify(heap->dato, n, cmp);
   return heap;
 }
 
@@ -106,10 +103,8 @@ size_t heap_cantidad(const heap_t *heap){
 }
 
 void heap_destruir(heap_t *heap, void destruir_elemento(void *e)){
-  int i=0;
-  while(heap->dato[i]){
+  for(size_t i=0; i<heap->cantidad; i++){
     if(destruir_elemento) destruir_elemento(heap->dato[i]);
-    i++;
   }
   free(heap->dato);
   free(heap);
@@ -143,11 +138,9 @@ void* heap_desencolar(heap_t *heap){
 
 void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
   _heapify(elementos,cant,cmp);
-  size_t i=cant-1;
-  while(i < cant){
+  for (size_t i = cant-1; i < cant; i--){
     _swap(elementos,0,i);
     _downheap(elementos,0,  i,cmp);
-    i--;
   }
 }
 
