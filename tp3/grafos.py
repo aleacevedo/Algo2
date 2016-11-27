@@ -2,6 +2,7 @@ class _Vertice:
     def __init__(self, id = None, valor = None, adyacencias = {}):
         self.id = id
         self.valor = valor
+        self.adyacencias = adyacencias
 
 class _IteradorGrafo:
     def __init__(self, vertices, ids):
@@ -22,6 +23,7 @@ class Grafos:
         self.vertices = {}
         self.adyacencias = {}
         self.largo = 0
+        self.diri = es_dirigido
 
     def __len__(self):
         return self.largo
@@ -30,18 +32,47 @@ class Grafos:
         return self.vertices.keys()
 
     def __getitem__(self, id):
-        self.vertices[id].valor
+        return self.vertices[id].valor
 
     def __setitem__(self, id, valor):
         if(self.vertices.get(id)==None):
+            self.largo++
             self.vertices[id] = _Vertice(id, valor,)
         else:
             self.vertices[id].valor = valor
 
     def __delitem__(self, id):
         if(self.vertices.get(id)!=None):
+            self.largo--
             del self.vertices[id]
             del self.adyacencias[id]
             key = self.keys()
             for i in key:
                 del self.adyacencias[i][id]
+
+    def __contains__(self, id):
+        return self.vertices.get(id)!=None
+
+    def agregar_arista(self, desde, hasta, peso = 1):
+        if (!self.__contains__(hasta)): raise KeyError
+        self.vertices[desde].adyacencias[hasta] = peso
+        if(!self.diri):
+            self.vertices[hasta].adyacencias[desde] = peso
+
+    def borrar_arista(self, desde, hasta):
+        if (!self.__contains__(desde)): raise KeyError
+        if (!self.__contains__(hasta)): raise KeyError
+        try:
+            del self.vertices[desde].adyacencias[hasta]
+            if(!self.diri): del self.vertices[hasta].adyacencias[desde]
+        except KeyError:
+            raise ValueError
+
+    def obtener_peso_arista(self, desde, hasta):
+        try:
+            return self.vertices[desde].adyacencias[hasta]
+        except KeyError:
+            return None
+
+    def adyacentes(self, id):
+        return self.vertices[id].adyacencias.keys()

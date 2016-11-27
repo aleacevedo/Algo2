@@ -298,8 +298,6 @@ bool abb_iter_in_avanzar(abb_iter_t *iter){
   nodo_abb_t *actual;
   if(abb_iter_in_al_final(iter)) return false;
   actual = pila_desapilar(iter->pila);
-  printf("%s\n","PILA desapilar" );
-  printf("%s\n", actual->clave);
   return _iter_apilar(actual->der, iter->pila);
 }
 
@@ -364,6 +362,8 @@ abb_item_t* abb_obtener_items(const abb_t* abb){
     extra[i].clave = copia_clave;
     extra[i].valor = abb_obtener(abb,clave);
     abb_iter_in_avanzar(iter);
+    i++;
   }
+  abb_iter_in_destruir(iter);
   return extra;
 }

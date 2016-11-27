@@ -204,6 +204,7 @@ static void prueba_abb_volumen(size_t largo, bool debug){
 }
 
 void prueba_abb_items() {
+  printf("%s\n","PRUEBA ABB ITEMS" );
   abb_t* abb = abb_crear(strcmp,free);
   const size_t largo_clave = 10;
   size_t largo = 12;
@@ -224,13 +225,19 @@ void prueba_abb_items() {
     if (!ok) break;
   }
   print_test("Prueba abb almacenar 12 elementos", ok);
+  printf("\n%s\n\n","ACA ESTAN ORDENADOS" );
   abb_item_t* items = abb_obtener_items(abb);
   int j = 0;
   while(j<abb_cantidad(abb)){
     printf("Clave = %s\t Valor = %i\n", items[j].clave,*(int*) items[j].valor);
+    free((char*)items[j].clave);
     j++;
   }
-
+  abb_destruir(abb);
+  free(clave);
+  free(clave_ord);
+  free(claves);
+  free(items);
 }
 
 void pruebas_abb_alumno(){
