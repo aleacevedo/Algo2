@@ -1,3 +1,5 @@
+import random
+
 class _Vertice:
     def __init__(self, id = None, valor = None, adyacencias = {}):
         self.id = id
@@ -76,3 +78,15 @@ class Grafos:
 
     def adyacentes(self, id):
         return self.vertices[id].adyacencias.keys()
+
+    def random_walk(self, largo, origen = None):
+        camino = []
+        while x in largo:
+            if(origen == None): origen = random.choice(self.vertices.keys())
+            for x in self.vertices[origen].adyacencias:
+                adyacentes = []
+                for i in range self.vertices[origen].adyacencias[x]:
+                    adyacentes.append(x)
+            camino.append(random.choice(adyacentes))
+            x++
+        return camino
