@@ -31,6 +31,24 @@ void prueba_sort(int largo){
   }
 }
 
+void prueba_heap_arr(int largo){
+  void** valores = malloc(largo*sizeof(void*));
+  int valor[largo];
+  bool ok = true;
+  for(int i = 0; i<largo; i++){
+    valor[i] = i;
+    valores[i] = &valor[i];
+  }
+  heap_t *heap = heap_crear_arr(valores, largo, comp_ent);
+  for(int i = largo-1; i>=0; i--){
+    void *aux = heap_desencolar(heap);
+    ok = *(int*)aux==i;
+    if(!ok) break;
+  }
+  print_test("Prueba heap desencolar arreglo", ok);
+  heap_destruir(heap, NULL);
+}
+
 void prueba_heap_mil(int largo){
   heap_t *heap = heap_crear(comp_ent);
   int *valores[largo];
@@ -59,6 +77,8 @@ void prueba_heap_mil(int largo){
 
 void prueba_heap_vacio(){
   heap_t *heap = heap_crear(comp_ent);
+  print_test("Prueba desencolar heap vacio", heap_desencolar(heap) == NULL);
+  print_test("Prueba ver max heap vacio", heap_ver_max(heap) == NULL);
   print_test("Prueba heap el heap esta vacio", heap_esta_vacio(heap));
   print_test("Prueba heap la cantidad es 0", heap_cantidad(heap) == 0);
   heap_destruir(heap,NULL);
@@ -99,37 +119,11 @@ void prueba_heap_10(){
   heap_destruir(heap, free);
 }
 
-void prueba_heap_act_prio_10(){
-  heap_t *heap = heap_crear(comp_ent);
-  bool ok = true;
-  int largo = 10;
-  int *punteros[largo];
-  for(int i=0; i<largo; i++){
-    punteros[i] = calloc(1, sizeof(int));
-    *punteros[i] = i;
-    ok = heap_encolar(heap, punteros[i]);
-    if(!ok) break;
-  }
-  print_test("Prueba heap encolar 10 punteros para actualizar", ok);
-  for(int i = 0; i<largo; i++){
-	  *punteros[i] = largo*2-i;
-	  heap_actualizar_prioridad(heap, punteros[i]);
-  }
-  for(int i = 0; i<largo; i++){
-		int *punt = heap_desencolar(heap);
-		ok = punt==punteros[i];
-		free(punt);
-		if(!ok) break;
-	}
-  print_test("Prueba heap desencolar 10 punteros actualizados", ok);
-  heap_destruir(heap, free);
-}
-
 void pruebas_heap_alumno(){
   prueba_heap_vacio();
   prueba_heap_4();
   prueba_heap_10();
   prueba_heap_mil(1000);
   prueba_sort(10);
-  prueba_heap_act_prio_10();
+  prueba_heap_arr(10);
 }
