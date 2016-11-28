@@ -1,5 +1,5 @@
 import random
-
+import heapq
 class _Vertice:
     def __init__(self, id = None, valor = None):
         self.id = id
@@ -55,6 +55,7 @@ class Grafos:
                     pass
     def __contains__(self, id):
         return self.vertices.get(id)!=None
+
 
     def agregar_arista(self, desde, hasta, peso = 1):
         if (not self.__contains__(hasta)): raise KeyError

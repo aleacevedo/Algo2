@@ -75,16 +75,35 @@ def recomendar(grafo, personaje, cantidad):
         return lista
     except KeyError:
         pass
-'''
+
 def camino(grafo, origen, destino):
+    visitados = []
     vecinos = []
+    camino = []
     vuelta = {}
     costo = {}
-    vuelta[origen] = 0
+    vuelta[origen] = []
     costo[origen] = 0
-    vecinos.push(0,origen)
-    while vecinos
-'''
+    heapq.heappush(vecinos,(0,origen))
+    while (len(vecinos)!=0):
+        actual = heapq.heappop(vecinos)[1]
+        if actual == destino:
+            break
+        for vecino_actual in grafo.adyacentes(actual):
+            nuevo_costo = costo[actual] + grafo.obtener_peso_arista(actual, vecino_actual)
+            if (vecino_actual not in costo or nuevo_costo<costo[vecino_actual]):
+                costo[vecino_actual] = nuevo_costo
+                if(vecino_actual not in visitados):
+                    visitados.append(vecino_actual)
+                    heapq.heappush(vecinos,(-nuevo_costo,vecino_actual))
+                vuelta[vecino_actual] = actual
+    if(destino in vuelta):
+        while (actual!=origen):
+            camino.insert(0, actual)
+            actual = vuelta[actual]
+        camino.insert(0,actual)
+        return  camino
+    return camino
 
 def main():
     red = grafo_crear()
@@ -92,6 +111,10 @@ def main():
     print(similares(red,"KNIGHT"  , 5))
     print("recomendar")
     print(recomendar(red,"KNIGHT"  , 5))
+    print("camino")
+    print('CAPTAIN AMERICA' in red.adyacentes("KNIGHT"))
+    print(len(red.adyacentes("KNIGHT")))
+    print(camino(red, "KNIGHT", 'CAPTAIN AMERICA'))
 
 
 main()
