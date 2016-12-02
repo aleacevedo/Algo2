@@ -12,6 +12,9 @@ def walk(grafo, personaje):
     return res
 
 def contar(lista, dic = {}):
+    '''Recibe una lista y devuelve un diccionario que tiene como clave cada
+    elemento de esta lista y como valor la cantidad de veces que aparece,
+    en caso de que tambien se le pase un diccionario se le suman a los ya preexistentes'''
     for x in lista:
         if (x not in dic.keys()): dic[x] = 0
         dic[x] += 1
@@ -77,7 +80,6 @@ def recomendar(grafo, personaje, cantidad):
         pass
 
 def camino(grafo, origen, destino):
-    visitados = []
     vecinos = []
     camino = []
     vuelta = {}
@@ -90,12 +92,11 @@ def camino(grafo, origen, destino):
         if actual == destino:
             break
         for vecino_actual in grafo.adyacentes(actual):
-            nuevo_costo = costo[actual] + grafo.obtener_peso_arista(actual, vecino_actual)
-            if (vecino_actual not in costo or nuevo_costo<costo[vecino_actual]):
+            if(costo[actual]!=0): nuevo_costo = (1/costo[actual] + 1/grafo.obtener_peso_arista(actual, vecino_actual))
+            else:   nuevo_costo = (costo[actual] + 1/grafo.obtener_peso_arista(actual, vecino_actual))
+            if (vecino_actual not in costo or nuevo_costo < costo[vecino_actual]):
                 costo[vecino_actual] = nuevo_costo
-                if(vecino_actual not in visitados):
-                    visitados.append(vecino_actual)
-                    heapq.heappush(vecinos,(-nuevo_costo,vecino_actual))
+                heapq.heappush(vecinos,(nuevo_costo,vecino_actual))
                 vuelta[vecino_actual] = actual
     if(destino in vuelta):
         while (actual!=origen):
@@ -105,16 +106,35 @@ def camino(grafo, origen, destino):
         return  camino
     return camino
 
+
+def centralidad_b(grafo, cantidad):
+    apariciones = {}
+    res = []
+    for origen in grafo.keys():
+        cola = []
+        visto = {}
+        heapq.heappush(cola, (0, origen))
+        while len(cola)!=0:
+            vertice = heapq.heappop(cola)[1]
+            visto[vertice] = True
+            for vecino in grafo.adyacentes(vertice):
+                if(vecino not in apariciones): apariciones[vecino] = 0
+                if(not vecino == origen and not vertice == origen): apariciones[vecino] += 1
+                if(not vecino in visto):
+                    visto[vecino] = True
+                    heapq.heappush(cola,(0, vecino))
+    ordenados = ordenar(apariciones)
+    print(apariciones)
+    for x in heapq.nlargest(cantidad, ordenados):
+        res.append(x[1])
+    return res
+
+
 def main():
     red = grafo_crear()
-    print("similares")
-    print(similares(red,"KNIGHT"  , 5))
-    print("recomendar")
-    print(recomendar(red,"KNIGHT"  , 5))
-    print("camino")
-    print('CAPTAIN AMERICA' in red.adyacentes("KNIGHT"))
-    print(len(red.adyacentes("KNIGHT")))
-    print(camino(red, "KNIGHT", 'CAPTAIN AMERICA'))
-
+    print("Centralidad")
+#    print(centralidad(red,5))
+    print("centralidad_b")
+    print(centralidad_b(red,5))
 
 main()

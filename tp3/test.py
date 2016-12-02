@@ -7,14 +7,12 @@ grafo["Federico"] = 0
 grafo["Ramon"] = 0
 grafo["Leo"] = 0
 grafo["Gaston"] = 0
+grafo["Toto"] = 0
 grafo.agregar_arista("Alejo", "Juan", 1)
-grafo.agregar_arista("Alejo", "Tomas", 1)
+grafo.agregar_arista("Alejo", "Tomas", 4)
 grafo.agregar_arista("Alejo", "Federico", 8)
-grafo.agregar_arista("Juan", "Ramon")
-grafo.agregar_arista("Federico", "Leo")
-grafo.agregar_arista("Tomas", "Gaston", 3)
-grafo.agregar_arista("Juan", "Gaston", 20)
-grafo.agregar_arista("Federico", "Gaston", 10)
-grafo["Juancho"] = 0
-print("Alejo")
-print (grafo.camino("Alejo","Gaston"))
+grafo.agregar_arista("Alejo", "Ramon")
+grafo.agregar_arista("Alejo", "Leo")
+grafo.agregar_arista("Alejo", "Gaston", 40)
+print(grafo.centralidad(1))
+print(grafo.centralidad_b(1))
