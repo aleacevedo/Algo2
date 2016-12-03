@@ -1,5 +1,6 @@
 import grafos
 import heapq
+import sys
 
 ARCHIVO = "marvel.pjk"
 
@@ -57,9 +58,9 @@ def similares(grafo, personaje, cantidad):
     try:
         res = walk(grafo, personaje)
         res = ordenar(res)
-        res = heapq.nlargest(cantidad,res)
+        res = heapq.nlargest(cantidad+1,res)
         for i in range (cantidad):
-            lista.append(res[i][1])
+            lista.append(res[i+1][1])
         return lista
     except KeyError:
         return []
@@ -129,12 +130,74 @@ def centralidad_b(grafo, cantidad):
         res.append(x[1])
     return res
 
+def distancias(grafo, personaje):
+    x = 0
+    distancia = []
+    res = []
+    visitados = {}
+    distancia.append([personaje])
+    z = len(distancia)
+    visitados[personaje] = True
+    while x < z:
+        for y in distancia[x]:
+            if(len(distancia)==x+1):distancia.append([])
+            for vecino in grafo.adyacentes(y):
+                if(not vecino in visitados):
+                    distancia[x+1].append(vecino)
+                    visitados[vecino] = True
+        x+=1
+        z = len(distancia)
+    for x in distancia:
+        res.append(len(x))
+    res.pop()
+    return res
+
+def densidad(grafo):
+    vertices = grafo.cantidad()
+    return cant_aristas(grafo)/((vertices/2)*(vertices-1))
+
+def prom_grado(grafo):
+    total = 0
+    vertices = grafo.cantidad()
+    for x in grafo.keys():
+        total = total + len(grafo.adyacentes(x))
+    return total/vertices
+
+def cant_aristas(grafo):
+    for v in grafo.keys():
+        lista = lista + grafo.adyacentes(v)
+    return len(lista)/2
+
+def estadisticas(grafo):
+    return grafo.cantidad(grafo), cant_aristas(grafo), prom_grado(grafo), densidad(grafo)
+
+def max_label(grafo, vertice):
+    labels = []
+    for vecino in grafo. adyacentes(vertice):
+        labels.append(grafo.ver_label(vecino))
+    heapq.nlargest(m,ordenar(contar(labels)))
+
+def comunidades(grafo):
+    comunidad = {}
+    for x in range(100):
+        for vertice in grafo.keys():
+            grafo.cambiar_label(vertice, max_label(grafo,vertice))
+    for x in grafo.keys():
+        if not grafo.ver_label(x) in comunidad: comunidad[grafo.ver_label(x)] = []
+        comunidad[grafo.ver_label(x)].append(x)
 
 def main():
-    red = grafo_crear()
-    print("Centralidad")
-#    print(centralidad(red,5))
-    print("centralidad_b")
-    print(centralidad_b(red,5))
-
+    try:
+        red = grafo_crear(sys.argv[1])
+    except IndexError:
+        red = grafo_crear()
+    while True:
+        entrada = input().split(",")
+        comando = entrada[0].split(" ")
+        if("similares" in comando[0]):
+            personaje = " ".join(comando[1:])
+            print(similares(red, personaje, int(entrada[1])))
+        if("recomendar" in comando[0]):
+            personaje = " ".join(comando[1:])
+            print(recomendar(red, personaje, int(entrada[1])))
 main()
