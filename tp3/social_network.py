@@ -1,6 +1,9 @@
 import grafos
 import heapq
 import sys
+import os
+
+menu_principal= " similares PERSONAJE, CANTIDAD\n recomendar PERSONAJE, CANTIDAD\n camino PERSONAJE_1, PERSONAJE_2\n centralidad CANTIDAD\n distancias PERSONAJE\n estadisticas\n comunidades\n clear\n"
 
 ARCHIVO = "marvel.pjk"
 
@@ -185,12 +188,17 @@ def comunidades(grafo):
     for x in grafo.keys():
         if not grafo.ver_label(x) in comunidad: comunidad[grafo.ver_label(x)] = []
         comunidad[grafo.ver_label(x)].append(x)
+def menu():
+    os.system('clear')
+    print(menu_principal)
+    return
 
 def main():
     try:
         red = grafo_crear(sys.argv[1])
     except IndexError:
         red = grafo_crear()
+    menu()
     while True:
         entrada = input().split(",")
         comando = entrada[0].split(" ")
@@ -200,4 +208,22 @@ def main():
         if("recomendar" in comando[0]):
             personaje = " ".join(comando[1:])
             print(recomendar(red, personaje, int(entrada[1])))
+        if("camino" in comando[0]):
+            personaje1 = " ".join(comando[1:])
+            personaje2 = entrada[1:]
+            print(camino(red, personaje1, personaje2))
+        if("centralidad" in comando[0]):
+            parametro = comando[0].split(" ")
+            print(centralidad_b(red,parametro[1]))
+        if("distancias" in comando[0]):
+            parametro = comando[0].split(" ")
+            print(distancias(red, parametro[1]))
+        if("estadisticas" in comando[0]):
+            print(estadisticas(red))
+        if("comunidades" in comando[0]):
+            print(comunidades(red))
+        if("clear" in comando[0]):
+            menu()
+
+
 main()
