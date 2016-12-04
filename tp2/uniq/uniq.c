@@ -42,7 +42,10 @@ int main(int argc, char const *argv[]) {
       char *linea=NULL;
       size_t capacidad=0;
       ssize_t longitud = getline(&linea, &capacidad, archivo_p);
-      if (longitud == -1) break;
+      if (longitud == -1){
+        free(linea);
+        break;
+      }
       linea[longitud-1] = '\0';
       char **palabras = split(linea,' ');
       contar_palabras(hash,palabras);
