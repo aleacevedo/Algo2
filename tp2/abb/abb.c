@@ -282,7 +282,10 @@ abb_iter_t *abb_iter_in_crear(const abb_t *arbol){
   if(!iter) return NULL;
   iter->arbol = arbol;
   iter->pila = pila_crear();
-  if(!iter->pila) return NULL;
+  if(!iter->pila){
+    free(iter);
+    return NULL;
+  }
   if(!_iter_apilar(arbol->raiz, iter->pila)){
     pila_destruir(iter->pila);
     return NULL;
@@ -298,6 +301,8 @@ bool abb_iter_in_avanzar(abb_iter_t *iter){
   nodo_abb_t *actual;
   if(abb_iter_in_al_final(iter)) return false;
   actual = pila_desapilar(iter->pila);
+  printf("%s\n","PILA desapilar" );
+  printf("%s\n", actual->clave);
   return _iter_apilar(actual->der, iter->pila);
 }
 
@@ -305,6 +310,12 @@ const char* abb_iter_in_ver_actual(const abb_iter_t *iter){
   nodo_abb_t *actual = pila_ver_tope(iter->pila);
   if(!actual) return NULL;
   return actual->clave;
+}
+
+void* abb_iter_in_actual_dato(const abb_iter_t *iter){
+  nodo_abb_t *actual = pila_ver_tope(iter->pila);
+  if(!actual) return NULL;
+  return actual->dato;
 }
 
 void abb_iter_in_destruir(abb_iter_t* iter){
@@ -317,7 +328,10 @@ abb_iter_post_t*  abb_iter_post_crear(const abb_t* arbol){
   if(!iter) return NULL;
   iter->arbol = arbol;
   iter->pila = pila_crear();
-  if(!iter->pila) return NULL;
+  if(!iter->pila){
+    free(iter);
+    return NULL;
+  }
   if(arbol->raiz) pila_apilar(iter->pila, arbol->raiz);
   if(!_iter_post_apilar(iter)){
     pila_destruir(iter->pila);
@@ -360,9 +374,8 @@ abb_item_t* abb_obtener_items(const abb_t* abb){
     if(!copia_clave) return NULL;
     strcpy(copia_clave,clave);
     extra[i].clave = copia_clave;
-    extra[i].valor = abb_obtener(abb,clave);
+    extra[i].valor = abb_iter_in_actual_dato(iter);
     abb_iter_in_avanzar(iter);
-    i++;
   }
   abb_iter_in_destruir(iter);
   return extra;

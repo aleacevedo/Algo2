@@ -47,9 +47,9 @@ int main(int argc, char const *argv[]) {
       char **palabras = split(linea,' ');
       contar_palabras(hash,palabras);
       free(linea);
-      printf("%s\n", "hola");
       free_strv(palabras);
     }
+    fclose(archivo_p);
     hash_iter_t* iter = hash_iter_crear(hash);
     const char* clave;
     while(!hash_iter_al_final(iter)){
