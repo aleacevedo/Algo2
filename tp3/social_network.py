@@ -2,8 +2,9 @@ import grafos
 import heapq
 import sys
 import os
+import math
 
-menu_principal= " similares PERSONAJE, CANTIDAD\n recomendar PERSONAJE, CANTIDAD\n camino PERSONAJE_1, PERSONAJE_2\n centralidad CANTIDAD\n distancias PERSONAJE\n estadisticas\n comunidades\n clear\n"
+MENU_PRINCIPAL= " similares PERSONAJE, CANTIDAD\n recomendar PERSONAJE, CANTIDAD\n camino PERSONAJE_1, PERSONAJE_2\n centralidad CANTIDAD\n distancias PERSONAJE\n estadisticas\n comunidades\n clear\n"
 
 ARCHIVO = "marvel.pjk"
 
@@ -11,7 +12,8 @@ def walk(grafo, personaje):
     res = {}
     for x in range (20):
         camino = grafo.random_walk(100, personaje)
-        camino.remove(personaje)
+        while(personaje in camino):
+            camino.remove(personaje)
         res = contar(camino, res)
     return res
 
@@ -58,6 +60,7 @@ def grafo_crear(archivo = ARCHIVO):
 
 def similares(grafo, personaje, cantidad):
     lista = []
+    print(personaje)
     try:
         res = walk(grafo, personaje)
         res = ordenar(res)
@@ -84,30 +87,16 @@ def recomendar(grafo, personaje, cantidad):
         pass
 
 def camino(grafo, origen, destino):
-    vecinos = []
     camino = []
-    vuelta = {}
-    costo = {}
-    vuelta[origen] = []
-    costo[origen] = 0
-    heapq.heappush(vecinos,(0,origen))
-    while (len(vecinos)!=0):
-        actual = heapq.heappop(vecinos)[1]
-        if actual == destino:
-            break
-        for vecino_actual in grafo.adyacentes(actual):
-            if(costo[actual]!=0): nuevo_costo = (1/costo[actual] + 1/grafo.obtener_peso_arista(actual, vecino_actual))
-            else:   nuevo_costo = (costo[actual] + 1/grafo.obtener_peso_arista(actual, vecino_actual))
-            if (vecino_actual not in costo or nuevo_costo < costo[vecino_actual]):
-                costo[vecino_actual] = nuevo_costo
-                heapq.heappush(vecinos,(nuevo_costo,vecino_actual))
-                vuelta[vecino_actual] = actual
-    if(destino in vuelta):
+    caminos_min = grafo.pseudo_dijstra(origen, destino)
+    if(destino in caminos_min):
+        actual = destino
         while (actual!=origen):
             camino.insert(0, actual)
-            actual = vuelta[actual]
+            actual = caminos_min[actual]
         camino.insert(0,actual)
-        return  camino
+        peso_f = 0;
+        return camino
     return camino
 
 
@@ -128,8 +117,7 @@ def centralidad_b(grafo, cantidad):
                     visto[vecino] = True
                     heapq.heappush(cola,(0, vecino))
     ordenados = ordenar(apariciones)
-    print(apariciones)
-    for x in heapq.nlargest(cantidad, ordenados):
+    for x in heapq.nlargest(int(cantidad), ordenados):
         res.append(x[1])
     return res
 
@@ -153,6 +141,7 @@ def distancias(grafo, personaje):
     for x in distancia:
         res.append(len(x))
     res.pop()
+    res.pop(0)
     return res
 
 def densidad(grafo):
@@ -167,18 +156,27 @@ def prom_grado(grafo):
     return total/vertices
 
 def cant_aristas(grafo):
+    lista = []
     for v in grafo.keys():
-        lista = lista + grafo.adyacentes(v)
+        lista = lista + list(grafo.adyacentes(v))
     return len(lista)/2
 
+def desvio_estandar(grafo):
+    grado_prom = prom_grado(grafo)
+    cantidad = grafo.cantidad()
+    sumatoria = 0
+    for x in grafo.keys():
+        sumatoria += math.pow(len(grafo.adyacentes(x)) - grado_prom, 2 )
+    return math.sqrt(sumatoria/cantidad-1)
+
 def estadisticas(grafo):
-    return grafo.cantidad(grafo), cant_aristas(grafo), prom_grado(grafo), densidad(grafo)
+    return grafo.cantidad(), cant_aristas(grafo), prom_grado(grafo), desvio_estandar(grafo), densidad(grafo)
 
 def max_label(grafo, vertice):
     labels = []
-    for vecino in grafo. adyacentes(vertice):
+    for vecino in list(grafo.adyacentes(vertice)):
         labels.append(grafo.ver_label(vecino))
-    heapq.nlargest(m,ordenar(contar(labels)))
+    return heapq.nlargest(1,ordenar(contar(labels)))[0][1]
 
 def comunidades(grafo):
     comunidad = {}
@@ -188,9 +186,10 @@ def comunidades(grafo):
     for x in grafo.keys():
         if not grafo.ver_label(x) in comunidad: comunidad[grafo.ver_label(x)] = []
         comunidad[grafo.ver_label(x)].append(x)
+    return comunidad
 def menu():
     os.system('clear')
-    print(menu_principal)
+    print(MENU_PRINCIPAL)
     return
 
 def main():
@@ -210,20 +209,25 @@ def main():
             print(recomendar(red, personaje, int(entrada[1])))
         if("camino" in comando[0]):
             personaje1 = " ".join(comando[1:])
-            personaje2 = entrada[1:]
+            personaje2 = entrada[1:][0][1:]
             print(camino(red, personaje1, personaje2))
         if("centralidad" in comando[0]):
-            parametro = comando[0].split(" ")
-            print(centralidad_b(red,parametro[1]))
+            print(centralidad_b(red,comando[1]))
         if("distancias" in comando[0]):
-            parametro = comando[0].split(" ")
-            print(distancias(red, parametro[1]))
+            personaje = " ".join(comando[1:])
+            i = 0
+            for x in distancias(red, personaje):
+                i+=1
+                print("Distancia "+str(i)+": "+str(x))
         if("estadisticas" in comando[0]):
-            print(estadisticas(red))
+            datos = estadisticas(red)
+            print("Cantidad de vertices: "+str(datos[0]))
+            print("Cantidad de aristas: "+str(datos[1]))
+            print("Promedio del grado de cada vertice: "+str(datos[2]))
+            print("Desvio estandar del grafo de cada vertice: "+str(datos[3]))
+            print("Densidad del grafo: "+str(datos[4]))
         if("comunidades" in comando[0]):
             print(comunidades(red))
         if("clear" in comando[0]):
             menu()
-
-
 main()

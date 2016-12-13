@@ -97,7 +97,25 @@ class Grafos:
         return len(self.vertices)
 
     def ver_label(self, id):
-        return self.vertices(id).label
+        return self.vertices[id].label
 
     def cambiar_label(self, id, label):
-        self.vertices(id).label = label
+        self.vertices[id].label = label
+
+    def pseudo_dijstra(grafo, origen, destino):
+        vecinos = []
+        camino = []
+        padre = {}
+        costo = {}
+        padre[origen] = []
+        costo[origen] = 0
+        heapq.heappush(vecinos,(0,origen))
+        while (len(vecinos)!=0):
+            actual = heapq.heappop(vecinos)[1]
+            for vecino_actual in grafo.adyacentes(actual):
+                nuevo_costo = (costo[actual] + 1/grafo.obtener_peso_arista(actual, vecino_actual))
+                if (vecino_actual not in costo or  nuevo_costo < costo[vecino_actual]):
+                    costo[vecino_actual] = nuevo_costo
+                    heapq.heappush(vecinos,(nuevo_costo,vecino_actual))
+                    padre[vecino_actual] = actual
+        return padre
